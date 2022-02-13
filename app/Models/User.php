@@ -72,4 +72,14 @@ class User extends Authenticatable
 
         return $users;
     }
+
+    public function results()
+    {
+        return $this->hasMany(Result::class, 'user_id', 'id');
+    }
+
+    public function result_of(int $survey_id)
+    {
+        return $this->results()->where('survey_id', $survey_id)->get();
+    }
 }
