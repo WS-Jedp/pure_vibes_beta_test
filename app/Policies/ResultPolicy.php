@@ -71,7 +71,7 @@ class ResultPolicy
      */
     public function delete(User $user, Result $result)
     {
-        //
+        return $user->role->name === ROLES::ADMIN;
     }
 
     /**
@@ -83,7 +83,7 @@ class ResultPolicy
      */
     public function restore(User $user, Result $result)
     {
-        //
+        return $user->role->name === ROLES::ADMIN;
     }
 
     /**
