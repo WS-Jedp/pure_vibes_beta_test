@@ -42,7 +42,7 @@ class ResultPolicy
      */
     public function create(User $user)
     {
-        return $user->role->name == ROLES::TESTER || $user->role->name === ROLES::ADMIN ;
+        return $user->role->name != ROLES::GUEST;
     }
 
     /**
@@ -59,7 +59,7 @@ class ResultPolicy
             return false;
         }
 
-        return $user->role->name == ROLES::TESTER || $user->role->name == ROLES::ADMIN;
+        return $user->role->name != ROLES::GUEST;
     }
 
     /**

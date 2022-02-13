@@ -56,21 +56,11 @@ class User extends Authenticatable
 
     public function invited_by()
     {
-        $users_id = $this->hasMany(Invitation::class, 'guest_id')->get(['guest_id'])
-            ->map(function ($user) {
-                return $user->id;
-            });
+        $users_id = $this->invitations->map(function($user) {
+            return $user->id;
+        });
 
-        $users = new Collection();
-
-        foreach ($users_id as $key => $id) {
-            $user = User::where('id', $id)->first();
-            if($user) {
-                $users->append($user);
-            }
-        }
-
-        return $users;
+        return User::whereIn('id', $users_id)->get();
     }
 
     public function results()

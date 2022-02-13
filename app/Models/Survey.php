@@ -20,7 +20,7 @@ class Survey extends Model
         return $this->hasMany(Result::class, 'survey_id', 'id');
     }
 
-    public function number_of_question(): int
+    public function amount_of_questions(): int
     {
         return count($this->questions);
     }
