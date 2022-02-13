@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -42,7 +44,32 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function role() {
+    public function role()
+    {
         return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class, 'user_id', 'id');
+    }
+
+    public function invited_by()
+    {
+        $users_id = $this->hasMany(Invitation::class, 'guest_id')->get(['guest_id'])
+            ->map(function ($user) {
+                return $user->id;
+            });
+
+        $users = new Collection();
+
+        foreach ($users_id as $key => $id) {
+            $user = User::where('id', $id)->first();
+            if($user) {
+                $users->append($user);
+            }
+        }
+
+        return $users;
     }
 }
