@@ -72,4 +72,9 @@ class User extends Authenticatable
     {
         return $this->results()->where('survey_id', $survey_id)->get();
     }
+
+    public function amount_of_results()
+    {
+        return $this->results()->count();
+    }
 }

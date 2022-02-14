@@ -24,4 +24,9 @@ class Result extends Model
     {
         return $this->belongsTo(Survey::class, 'survey_id', 'id');
     }
+
+    public function get_results_by_user(int $user_id)
+    {
+        return $this->all()->where('user_id', $user_id);
+    }
 }

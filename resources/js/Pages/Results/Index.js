@@ -4,6 +4,10 @@ import { Head } from '@inertiajs/inertia-react';
 
 export default function Results(props) {
 
+    const { results } = props
+
+    console.log(results)
+
     return (
         <Authenticated
             auth={props.auth}
@@ -12,13 +16,27 @@ export default function Results(props) {
         >
             <Head title="Surveys" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">All the results information</div>
+            {
+                results.map(result => (
+                    <div className="py-12" key={result.id}>
+                        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div className="p-6 bg-white border-b border-gray-200">
+                                    <h3>Results By: {result.email}</h3>
+
+                                    {
+                                        result.results.length > 0 && result.results.map(results => (
+                                            <div>
+                                                <strong>Results of survey {results.survey_id}</strong>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                ))
+            }
         </Authenticated>
     );
 }
