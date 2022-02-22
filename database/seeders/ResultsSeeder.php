@@ -53,7 +53,7 @@ class ResultsSeeder extends Seeder
             ],
             [
                 "answers" => json_encode($this->answersMock2),
-                "survey_id" => 1,
+                "survey_id" => 2,
                 "user_id" => 1,
                 "created_at" => now(),
                 "updated_at" => now(),
