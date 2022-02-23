@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\SurveyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,15 +18,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('test', function ()
-{
-    return "Hello world";
-});
-
 Route::middleware('auth:sanctum')->group(function() {
 
     Route::get('/user', function (Request $request) {
         return response()->json($request->user());
     });
 
+    Route::resource('surveys', SurveyController::class);
+    Route::prefix('surveys/state')->group(function() {
+        Route::get('/all', [SurveyController::class, 'surveysState']);
+        Route::get('/{survey}', [SurveyController::class, 'state']);
+    });
 });

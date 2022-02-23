@@ -29,4 +29,9 @@ class Result extends Model
     {
         return $this->all()->where('user_id', $user_id);
     }
+
+    public function get_survey_results_by_user(int $survey_id, int $user_id)
+    {
+        return $this->first()->where('user_id', $user_id)->where('survey_id', $user_id);
+    }
 }
