@@ -25,7 +25,7 @@ class ResultRequest extends FormRequest
     public function rules()
     {
         return [
-            "survey_id" => "required|number",
+            "survey_id" => "required|integer",
             "answers" => "required|json",
         ];
     }

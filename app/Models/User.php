@@ -70,7 +70,7 @@ class User extends Authenticatable
 
     public function result_of(int $survey_id)
     {
-        return $this->results()->where('survey_id', $survey_id)->get();
+        return $this->results()->where('survey_id', $survey_id)->first();
     }
 
     public function amount_of_results()
