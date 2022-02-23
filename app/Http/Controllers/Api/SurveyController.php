@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Survey as ResourcesSurvey;
 use App\Models\Result;
 use App\Models\Survey;
 use Illuminate\Http\Request;
@@ -19,7 +18,7 @@ class SurveyController extends Controller
     {
         return [
             'status' => 200,
-            'data' => Survey::all('id', 'name', 'questions')
+            'data' => Survey::all('id', 'name')
         ];
     }
 
@@ -31,7 +30,7 @@ class SurveyController extends Controller
             ->select('answers')
             ->first();
             
-        $amountOfAnswers = count($resultsOfUser->answers);
+        $amountOfAnswers = $resultsOfUser ? count($resultsOfUser->answers) : 0;
 
         return [
             'status' => 200,
