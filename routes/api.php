@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ResultsContrller;
 use App\Http\Controllers\Api\SurveyController;
+use App\Http\Controllers\InvitationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,5 +33,7 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::resource('answers', ResultsContrller::class);
+
+    Route::post('/invite/{user}', [InvitationController::class, 'store']);
 
 });
