@@ -57,11 +57,12 @@ class User extends Authenticatable
 
     public function invited_by()
     {
-        $users_id = $this->invitations->map(function($user) {
-            return $user->id;
-        });
+        $user = Invitation::join('users', 'users.id', '=', 'invitations.user_id')
+            ->where('guest_id', $this->id)
+            ->select('users.id', 'users.name', 'users.email')
+            ->first();
 
-        return User::whereIn('id', $users_id)->get();
+        return $user;
     }
 
     public function results()

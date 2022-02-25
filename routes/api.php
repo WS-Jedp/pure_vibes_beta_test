@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ResultsContrller;
 use App\Http\Controllers\Api\SurveyController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,13 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function() {
 
     Route::get('/user', function (Request $request) {
-        return response()->json($request->user());
+        return response()->json([
+            'status' => 200,
+            'data' => [
+                'user' => $request->user(),
+                'invitedBy' => $request->user()->invited_by(),
+            ]
+        ]);
     });
 
     Route::resource('surveys', SurveyController::class);
@@ -35,5 +42,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::resource('answers', ResultsContrller::class);
 
     Route::post('/invite/{user}', [InvitationController::class, 'store']);
+
+    Route::post('/become/tester', [RoleController::class, 'becomeTester']);
 
 });
