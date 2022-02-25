@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Result;
 use App\Models\Survey;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SurveyController extends Controller
@@ -48,10 +49,15 @@ class SurveyController extends Controller
             ->where('results.user_id', $request->user()->id)
             ->get();
 
+        $isAllSurveysComplete = true;
+
         $surveysState = $surveys->map(function($survey) {
             $questions = json_decode($survey->questions);
             $amountOfAnswers = count($survey->answers);
             $amountOfQuestions = count($questions);
+
+
+            $amountOfAnswers < $amountOfQuestions && $isAllSurveysComplete = false;
 
             return [
                 'survey_id' => $survey->survey_id,
@@ -66,7 +72,40 @@ class SurveyController extends Controller
             "status" => 200,
             "data" => [
                 "surveysState" => $surveysState,
-                "isBetaTestDone" => count($surveysState) == Survey::TOTAL_OF_SURVEYS
+                "isBetaTestDone" => count($surveysState) == Survey::TOTAL_OF_SURVEYS && $isAllSurveysComplete
+            ],
+        ];
+    }
+
+    public function isBetaTestDoneFor(Request $request, User $user)
+    {
+        $surveys = Result::join('surveys', 'surveys.id', '=', 'results.survey_id')
+            ->where('results.user_id', $user->id)
+            ->get();
+
+        $isAllSurveysComplete = true;
+
+        $surveysState = $surveys->map(function($survey) {
+            $questions = json_decode($survey->questions);
+            $amountOfAnswers = count($survey->answers);
+            $amountOfQuestions = count($questions);
+
+
+            if($amountOfAnswers < $amountOfQuestions)
+            {
+                $isAllSurveysComplete = false;
+            };
+
+            return [
+                'survey_id' => $survey->survey_id,
+                "isComplete" => $amountOfAnswers == $amountOfQuestions,
+            ];
+        });
+
+        return [
+            "status" => 200,
+            "data" => [
+                "isBetaTestDone" => count($surveysState) == Survey::TOTAL_OF_SURVEYS && $isAllSurveysComplete
             ],
         ];
     }

@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::prefix('surveys/state')->group(function() {
         Route::get('/all', [SurveyController::class, 'surveysState']);
         Route::get('/{survey}', [SurveyController::class, 'state']);
+        Route::get('/user/{user}', [SurveyController::class, 'isBetaTestDoneFor']);
     });
 
     Route::resource('answers', ResultsContrller::class);
