@@ -58,4 +58,23 @@ class AuthController extends Controller
             "message" => "Logged in!"
         ];
     }
+
+    public function logout(Request $request)
+    {
+
+        if(!$request->user()->tokens) {
+            return [
+                'status' => 400,
+                'data' => false,
+                'message' => "The user doesn't have any token to revoke"
+            ];
+        }
+
+        $request->user()->tokens()->delete();
+        
+        return [
+            'status' => 200,
+            'data' => true,
+        ];
+    }
 }

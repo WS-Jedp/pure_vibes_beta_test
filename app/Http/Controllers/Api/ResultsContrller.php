@@ -66,10 +66,10 @@ class ResultsContrller extends Controller
     public function show(Request $request, int $survey_id)
     {
 
+
         $answers = $request->user()->result_of($survey_id);
         $amountOfQuestions = count(Survey::find($survey_id)->questions);
 
-        return $answers;
         if(!$answers) {
             return [
                 "status" => 200,
@@ -84,7 +84,7 @@ class ResultsContrller extends Controller
             "status" => 200,
             "data" => [
                 "id" => $answers->id,
-                "answers" => json_encode($answers->answers),
+                "answers" => $answers->answers,
                 "totalQuestions" => $amountOfQuestions,
                 "totalAnswers" => $amountOfAnswers,
                 "isComplete" => $amountOfQuestions == $amountOfAnswers,
