@@ -8,21 +8,24 @@ use App\Models\Invitation;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Utils\ROLES;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 
 class InvitationController extends Controller
 {
     public function store(InvitationRequest $request, User $user)
     {
 
-        
         $role = Role::where('name', ROLES::GUEST)->first();
-        
+
+        $passwordToEncrypt = str_replace(' ', '', $request->name) . '_' . env('DEFAULT_PASSWORD');
+
         $invitedUser = User::create([
             "name" => $request->name,
             "email" => $request->email,
-            "password" => Hash::make($request->name . '_' . env('DEFAULT_PASSWORD')),
+            "password" => Hash::make($passwordToEncrypt),
             "role_id" => $role->id,
         ]);
         
@@ -31,9 +34,9 @@ class InvitationController extends Controller
             "guest_id" => $invitedUser->id,
         ]);
         $invitation->save();
-        
+
         try {
-            Mail::to($request->email)->send(new UserInvitation($user, $user->email));
+            Mail::to($request->email)->send(new UserInvitation($invitedUser, $passwordToEncrypt, $user->email));
         } catch (\Throwable $th) {
             $invitedUser->delete();
             $invitation->delete();
