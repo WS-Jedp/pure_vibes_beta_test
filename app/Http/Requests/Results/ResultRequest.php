@@ -26,7 +26,7 @@ class ResultRequest extends FormRequest
     {
         return [
             "survey_id" => "required|integer",
-            "answers" => "required|json",
+            "answers" => "required|array",
         ];
     }
 }

@@ -17,9 +17,17 @@ class SurveyController extends Controller
      */
     public function index()
     {
+        $surveys = Survey::all()->map(function($survey) {
+            return [
+                'id' => $survey->id,
+                'name' => $survey->name,
+                'questionsTotal' => count($survey->questions),
+            ];
+        });
+
         return [
             'status' => 200,
-            'data' => Survey::all('id', 'name')
+            'data' => $surveys
         ];
     }
 
@@ -38,7 +46,8 @@ class SurveyController extends Controller
             'data' => [
                 "results" => $resultsOfUser,
                 'questionsTotal' => $amountOfQuestions,
-                'isComplete' => $amountOfAnswers == $amountOfQuestions
+                'isComplete' => $amountOfAnswers == $amountOfQuestions,
+                'totalOfImages' => $survey->amount_of_images
             ]
         ];
     }

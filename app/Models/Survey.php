@@ -12,7 +12,7 @@ class Survey extends Model
 
     const TOTAL_OF_SURVEYS = 6;
 
-    protected $fillable = ['name', 'questions'];
+    protected $fillable = ['name', 'questions', 'amount_of_images'];
 
     public $casts = [
         'questions' => 'array'

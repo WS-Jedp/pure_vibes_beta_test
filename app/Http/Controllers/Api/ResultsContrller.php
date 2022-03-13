@@ -40,18 +40,29 @@ class ResultsContrller extends Controller
      */
     public function store(ResultRequest $request)
     {
+        $surveyID = $request->post('survey_id');
+        $lastResultSaved = Result::where('user_id', $request->user()->id)
+            ->where('survey_id', $surveyID)
+            ->first();
+        
+        $resultToSave = null;
 
-        $newResult = new Result();
-        $newResult->survey_id = $request->post('survey_id');
-        $newResult->answers = json_decode($request->post('answers'));
-        $newResult->user_id = $request->user()->id;
-        $newResult->save();
+        if($lastResultSaved) {
+            $resultToSave = $lastResultSaved;
+        } else {
+            $resultToSave = new Result();
+        }
+
+        $resultToSave->survey_id = $request->post('survey_id');
+        $resultToSave->answers = $request->post('answers');
+        $resultToSave->user_id = $request->user()->id;
+        $resultToSave->save();
 
         return [
             'status' => 201,
             'data' => [
                 'created' => true,
-                'id' => $newResult->id
+                'id' => $resultToSave->id
             ],
             'message' => 'The results were saved!'
         ];
