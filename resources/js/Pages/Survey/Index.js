@@ -1,12 +1,10 @@
 import React from 'react';
 import Authenticated from '@/Layouts/Authenticated';
-import { Head } from '@inertiajs/inertia-react';
+import { Head, Link } from '@inertiajs/inertia-react';
 
 export default function Survey(props) {
 
     const { surveys } = props
-    
-    console.log(surveys)
 
     return (
         <Authenticated
@@ -16,32 +14,25 @@ export default function Survey(props) {
         >
             <Head title="Surveys" />
 
-            {
-                surveys.map(survey => (
-                    <div className="py-12" key={survey.id}>
-                        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                                <div className="p-6 bg-white border-b border-gray-200">
-                                    <h2>Survey: { survey.name }</h2>
-                                </div>
+            <section className="container mx-auto flex flex-row items-center content-center flex-wrap shadow-lg p-3 md:p-9 bg-slate-200">
+                {
+                    surveys.map(survey => (
+                        <Link href={route('survey.show', survey.id)} key={survey.id}>
+                            <article 
+                                className='bg-white min-w-[270px] w-60 max-w-[270px] h-40 flex flex-col items-start content-center 
+                                rounded-md shadow-lg p-3 md:p-6 ease-in-out duration-300 m-3
+                                hover:cursor-pointer hover:scale-110'
+                                >
+                                <h2 className='font-bold text-base my-3'>
+                                    { survey.name }
+                                </h2>
+                                <p>{survey.questions.length} Questions</p>
+                            </article>
+                        </Link>
+                    ))
+                }
+            </section>
 
-                                <article>
-
-                                    {
-                                        survey.questions.map(question => (
-                                            <div>
-                                                <h4>Question #{question.id}</h4>
-                                                <p>{question.question} - {question.type}</p>
-                                            </div>
-                                        ))
-                                    }
-
-                                </article>
-                            </div>
-                        </div>
-                    </div>
-                ))
-            }
         </Authenticated>
     );
 }

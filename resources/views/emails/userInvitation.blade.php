@@ -46,7 +46,7 @@
             to our BETA Testing Program by {{ $invitedBy }}.
         </p>
         <p class="fw-normal fs-4 text-center">
-            As an invited user you will be able to login and invite another user, and partcipate for win a prize. 
+            As an invited user you will be able to login and invite another user, and partcipate for a chance to win a cash prize!
             <ul style="margin: 0; padding: 0;">
                 <li style="list-style: none; margin: 0;">
                     <strong>

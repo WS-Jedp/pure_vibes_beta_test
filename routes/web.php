@@ -20,7 +20,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Auth/Login', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -34,7 +34,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('results', ResultController::class);
-    Route::resource('survey', SurveyController::class);
+    Route::resource('survey', SurveyController::class); 
 });
 
 require __DIR__ . '/auth.php';

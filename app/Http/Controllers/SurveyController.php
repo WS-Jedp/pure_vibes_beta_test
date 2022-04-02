@@ -14,4 +14,15 @@ class SurveyController extends Controller
             "surveys" => $surveys
         ]);
     }
+
+    public function show(Request $request, Survey $survey) {
+        $survey->results;
+
+        $allSurveyNames = Survey::select(['name', 'id'])->get();
+
+        return Inertia::render('Survey/Show', [
+            "survey" => $survey,
+            "allSurveys" => $allSurveyNames
+        ]);
+    }
 }
