@@ -2,17 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Authenticated from '@/Layouts/Authenticated';
 import { Head, Link } from '@inertiajs/inertia-react';
 
-export default function Results(props) {
+export default function ResultsShow(props) {
 
     const { results } = props
 
     const TOTAL_OF_SURVEYS = 6
 
-    const [usersWithSurveyDone, setUsersWithSurveyDone] = useState([])
-    const [usersWithSurveyUnfinished, setUsersWithSurveyUnfinished] = useState([])
-    const [usersWithSurveyNotStarted, setUsersWithSurveyNotStarted] = useState([])
-
-    console.log(results)
 
     useEffect(() => {
         const done = []
@@ -109,7 +104,7 @@ export default function Results(props) {
                                 <article className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
                                     min-h-[90px] flex flex-col items-start justify-start p-6 rounded-md
                                     ease-in-out duration-500
-                                    hover:scale-[1.03] hover:shadow-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
+                                    hover:scale-[1.03] hover:shadowo-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
                                 '>
                                     <h3 className='group-hover:text-white font-bold mb-3 divide-y'>{user.name}</h3>
                                     <small className='font-bold group-hover:text-white'>{user.email}</small>

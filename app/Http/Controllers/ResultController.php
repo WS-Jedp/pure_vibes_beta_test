@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Results\ResultRequest;
 use App\Models\Result;
 use App\Models\Survey;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -14,7 +15,12 @@ class ResultController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Results/Index');
+
+        $results = User::with('results')->get();
+
+        return Inertia::render('Results/Index', [
+            "results" => $results
+        ]);
     }
 
     public function store(ResultRequest $request)

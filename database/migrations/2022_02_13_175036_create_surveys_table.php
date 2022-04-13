@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->json('questions');
+            $table->integer('amount_of_images')->nullable();
             $table->timestamps();
         });
     }

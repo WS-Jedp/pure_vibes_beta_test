@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Survey;
+use App\Models\User;
+use App\Models\Utils\ROLES;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -12,16 +14,28 @@ class DashboardController extends Controller
     public function index(Request $req) {
 
         $user = $req->user();
-        $userResults = $user->results()->count();
         $role = $user->role()->first(['id', 'name']);
-        $invitationsAmount = $user->invitations()->count();
-        $invitedBy = $user->invited_by();
+       
+
+        $allUsers = User::with('role')->get();
+
+        $admins = $allUsers->filter(function($user) {
+            return $user->role->name == ROLES::ADMIN;
+        });
+        $testers = $allUsers->filter(function($user) {
+            return $user->role->name == ROLES::TESTER;
+        });
+        $invited = $allUsers->filter(function($user) {
+            return $user->role->name == ROLES::GUEST;
+        });
+        
+        
 
         $props = [
-            "results" => $userResults,
             "role" => $role,
-            "numberOfInvitations" => $invitationsAmount,
-            "invitedBy" => $invitedBy,
+            "admins" => $admins,
+            "testers" => $testers,
+            "invited" => $invited,
         ];
 
         return Inertia::render('Dashboard', $props);

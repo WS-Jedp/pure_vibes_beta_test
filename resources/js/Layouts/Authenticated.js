@@ -22,7 +22,7 @@ export default function Authenticated({ auth, header, children }) {
 
                             <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Dashboard
+                                    All Users
                                 </NavLink>
                                 <NavLink href={route('survey.index')} active={route().current('survey.index')}>
                                     Surveys

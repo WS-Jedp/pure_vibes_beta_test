@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**
@@ -56,11 +57,12 @@ class User extends Authenticatable
 
     public function invited_by()
     {
-        $users_id = $this->invitations->map(function($user) {
-            return $user->id;
-        });
+        $user = Invitation::join('users', 'users.id', '=', 'invitations.user_id')
+            ->where('guest_id', $this->id)
+            ->select('users.id', 'users.name', 'users.email')
+            ->first();
 
-        return User::whereIn('id', $users_id)->get();
+        return $user;
     }
 
     public function results()
@@ -70,6 +72,11 @@ class User extends Authenticatable
 
     public function result_of(int $survey_id)
     {
-        return $this->results()->where('survey_id', $survey_id)->get();
+        return $this->results()->where('survey_id', $survey_id)->first();
+    }
+
+    public function amount_of_results()
+    {
+        return $this->results()->count();
     }
 }

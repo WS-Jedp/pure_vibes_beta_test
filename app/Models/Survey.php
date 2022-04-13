@@ -10,7 +10,9 @@ class Survey extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'questions'];
+    const TOTAL_OF_SURVEYS = 6;
+
+    protected $fillable = ['name', 'questions', 'amount_of_images'];
 
     public $casts = [
         'questions' => 'array'

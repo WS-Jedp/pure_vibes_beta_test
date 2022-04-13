@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Results;
+namespace App\Http\Requests;
 
-use App\Models\Result;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ResultRequest extends FormRequest
+class InvitationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +13,7 @@ class ResultRequest extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->can('create', Result::class);
+        return true;
     }
 
     /**
@@ -25,8 +24,15 @@ class ResultRequest extends FormRequest
     public function rules()
     {
         return [
-            "survey_id" => "required|integer",
-            "answers" => "required|array",
+            "name" => 'required|string',
+            "email" => 'required|string|email|unique:users'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.unique' => "This email has been already invited" 
         ];
     }
 }
