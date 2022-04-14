@@ -12,17 +12,17 @@ class SurveySeeder extends Seeder
 
     protected $questionSurveyAuth = [
         [
-            "id" => "1",
+            "id" => 1,
             "type" => QUESTION_TYPES::BOOLEAN,
             "question" => "Were there any sign-up or login issues?",
         ],
         [
-            "id" => "2",
+            "id" => 2,
             "type" => QUESTION_TYPES::RATE,
             "question" => "How would you rate the design of the sign-up and login screens?",
         ],
         [
-            "id" => "3",
+            "id" => 3,
             "type" => QUESTION_TYPES::RATE,
             "question" => "Please rate your overall experience of the sign-up and login screens?"
         ],
@@ -30,17 +30,17 @@ class SurveySeeder extends Seeder
 
     protected $questionsSurveyInterests = [
         [
-            "id" => 4,
+            "id" => 1,
             "type" => QUESTION_TYPES::BOOLEAN,
             "question" => "Was it difficult to figure out the Dharma Wheel’s functionality?"
         ],
         [
-            "id" => 5,
+            "id" => 2,
             "type" => QUESTION_TYPES::RATE,
             "question" => 'How would you rate the design of the Dharma Wheel "select interests" screen?'
         ],
         [
-            "id" => 6,
+            "id" => 3,
             "type" => QUESTION_TYPES::RATE,
             "question" => 'Please rate your overall experience of the "select interests" screen.'
         ]
@@ -48,12 +48,12 @@ class SurveySeeder extends Seeder
 
     protected $questionsSurveyHomeSection = [
         [
-            "id" => 7,
+            "id" => 1,
             "type" => QUESTION_TYPES::RATE,
             "question" => "How would you rate the design of the Home Tab page?",
         ],
         [
-            "id" => 8,
+            "id" => 2,
             "type" => QUESTION_TYPES::RATE,
             "question" => "Please rate your overall experience of the Home Tab.",
         ],
@@ -61,17 +61,17 @@ class SurveySeeder extends Seeder
 
     protected $questionsSurveyBrowsingSection = [
         [
-            "id" => 9,
+            "id" => 1,
             "type" => QUESTION_TYPES::RATE,
             "question" => 'How would you rate your experience while browsing through the "session details" screen?',
         ],
         [
-            "id" => 10,
+            "id" => 2,
             "type" => QUESTION_TYPES::TEXT,
             "question" => "In the session description, what would you like to see more information about?",
         ],
         [
-            "id" => 11,
+            "id" => 3,
             "type" => QUESTION_TYPES::BOOLEAN,
             "question" => 'Does the "session details" description persuade you to make a booking?',
         ],
@@ -79,17 +79,17 @@ class SurveySeeder extends Seeder
 
     protected $questionsSurveyBookings = [
         [
-            "id" => 12,
+            "id" => 1,
             "type" => QUESTION_TYPES::BOOLEAN,
             "question" => 'Would you change anything about the checkout process?',
         ],
         [
-            "id" => 13,
+            "id" => 2,
             "type" => QUESTION_TYPES::RATE,
             "question" => "Please rate your experience while completing a booking.",
         ],
         [
-            "id" => 14,
+            "id" => 3,
             "type" => QUESTION_TYPES::BOOLEAN,
             "question" => 'Does the "session details" description persuade you to make a booking?',
         ],
@@ -97,27 +97,27 @@ class SurveySeeder extends Seeder
 
     protected $questionsSurveyOverralExperience = [
         [
-            "id" => 15,
+            "id" => 1,
             "type" => QUESTION_TYPES::TEXT,
             "question" => 'When you navigate through the app, do you become confused at any point? If  yes, please explain.?',
         ],
         [
-            "id" => 16,
+            "id" => 2,
             "type" => QUESTION_TYPES::TEXT,
             "question" => "Would you add any other questions to the FAQs?",
         ],
         [
-            "id" => 17,
+            "id" => 3,
             "type" => QUESTION_TYPES::TEXT,
             "question" => "How would you describe the Dharma App using your own words?",
         ],
         [
-            "id" => 18,
+            "id" => 4,
             "type" => QUESTION_TYPES::TEXT,
             "question" => "If you had a magic wand, what would you change about the app?",
         ],
         [
-            "id" => 19,
+            "id" => 5,
             "type" => QUESTION_TYPES::TEXT,
             "question" => "Would you recommend the app to a friend?",
         ],
