@@ -35,6 +35,9 @@ Route::middleware('auth:sanctum')->group(function() {
         ]);
     });
 
+
+    Route::post('surveys/{id}/question', [SurveyController::class, 'storeQuestion']);
+    Route::delete('surveys/{surveyId}/question/{questionId}', [SurveyController::class, 'destroyQuestion']);
     Route::resource('surveys', SurveyController::class);
     Route::prefix('surveys/state')->group(function() {
         Route::get('/all', [SurveyController::class, 'surveysState']);
@@ -42,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::get('/user/{user}', [SurveyController::class, 'isBetaTestDoneFor']);
     });
 
+    Route::get('answers/user/{userId}', [ResultsContrller::class, 'resultByUser']);
     Route::resource('answers', ResultsContrller::class);
 
     Route::post('/invite/{user}', [InvitationController::class, 'store']);

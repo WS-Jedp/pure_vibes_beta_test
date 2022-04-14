@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SurveyRequest;
 use App\Models\Result;
 use App\Models\Survey;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SurveyController extends Controller
 {
@@ -17,7 +19,7 @@ class SurveyController extends Controller
      */
     public function index()
     {
-        $surveys = Survey::all()->map(function($survey) {
+        $surveys = Survey::all()->map(function ($survey) {
             return [
                 'id' => $survey->id,
                 'name' => $survey->name,
@@ -38,7 +40,7 @@ class SurveyController extends Controller
             ->where('survey_id', $survey->id)
             ->select('answers')
             ->first();
-            
+
         $amountOfAnswers = $resultsOfUser ? count($resultsOfUser->answers) : 0;
 
         return [
@@ -60,7 +62,7 @@ class SurveyController extends Controller
 
         $isAllSurveysComplete = true;
 
-        $surveysState = $surveys->map(function($survey) {
+        $surveysState = $surveys->map(function ($survey) {
             $questions = json_decode($survey->questions);
             $amountOfAnswers = count($survey->answers);
             $amountOfQuestions = count($questions);
@@ -94,14 +96,13 @@ class SurveyController extends Controller
 
         $isAllSurveysComplete = true;
 
-        $surveysState = $surveys->map(function($survey) {
+        $surveysState = $surveys->map(function ($survey) {
             $questions = json_decode($survey->questions);
             $amountOfAnswers = count($survey->answers);
             $amountOfQuestions = count($questions);
 
 
-            if($amountOfAnswers < $amountOfQuestions)
-            {
+            if ($amountOfAnswers < $amountOfQuestions) {
                 $isAllSurveysComplete = false;
             };
 
@@ -125,9 +126,61 @@ class SurveyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SurveyRequest $request)
     {
-        
+        try {
+            $validated = $request->validated();
+
+            $survey = new Survey();
+            $survey->name = $validated["name"];
+            $survey->questions = $validated["questions"];
+            $survey->amount_of_images = count($validated["questions"]);
+
+            $survey->save();
+        } catch (\Throwable $th) {
+            return [
+                'ok' => false,
+                'status' => 200,
+                'data' => "Check the entered data"
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'status' => 201,
+            'data' => $survey
+        ];
+    }
+
+    public function storeQuestion(Request $request, $id)
+    {
+        try {
+            $survey = Survey::find($id);
+
+            // Asignar le un id a la pregunta
+            $questions = collect($survey->questions);
+            $maxId = $questions->max('id');
+            $id = array('id' => (isset($maxId) ? $maxId : 0) + 1);
+            $newQuestion = array_merge($id, $request->all());
+            $questions->push($newQuestion);
+
+            $survey->questions = $questions;
+            $survey->amount_of_images = count($survey->questions);
+
+            $survey->save();
+        } catch (\Throwable $th) {
+            return [
+                'ok' => false,
+                'status' => 200,
+                'data' => "Check the entered data",
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'status' => 200,
+            'data' => $survey
+        ];
     }
 
     /**
@@ -151,9 +204,27 @@ class SurveyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(SurveyRequest $request, $id)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            $survey = Survey::find($id);
+            $survey->name = $validated["name"];
+            $survey->save();
+        } catch (\Throwable $th) {
+            return [
+                'ok' => false,
+                'status' => 200,
+                'data' => 'Check the entered data'
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'status' => 200,
+            'data' => $survey
+        ];
     }
 
     /**
@@ -164,6 +235,45 @@ class SurveyController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $survey = Survey::find($id);
+            $survey->delete();
+        } catch (\Throwable $th) {
+            return [
+                'ok' => false,
+                'status' => 200
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'status' => 200
+        ];
+    }
+
+    public function destroyQuestion($surveyId, $questionId)
+    {
+        try {
+            $survey = Survey::find($surveyId);
+
+            $questions = collect($survey->questions);
+            $questions = $questions->where('id', "<>", $questionId);
+
+            $survey->questions = $questions;
+            $survey->amount_of_images = count($survey->questions);
+
+            $survey->save();
+        } catch (\Throwable $th) {
+            return [
+                'ok' => false,
+                'status' => 200,
+                'error' => $th,
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'status' => 200,
+        ];
     }
 }
