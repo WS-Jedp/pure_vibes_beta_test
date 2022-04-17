@@ -8,6 +8,7 @@ use App\Models\Result;
 use App\Models\Survey;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SurveyController extends Controller
 {
@@ -18,7 +19,7 @@ class SurveyController extends Controller
      */
     public function index()
     {
-        $surveys = Survey::all()->map(function ($survey) {
+        $surveys = Survey::all()->map(function($survey) {
             return [
                 'id' => $survey->id,
                 'name' => $survey->name,
@@ -61,7 +62,7 @@ class SurveyController extends Controller
 
         $isAllSurveysComplete = true;
 
-        $surveysState = $surveys->map(function ($survey) {
+        $surveysState = $surveys->map(function($survey) {
             $questions = json_decode($survey->questions);
             $amountOfAnswers = count($survey->answers);
             $amountOfQuestions = count($questions);
@@ -95,13 +96,14 @@ class SurveyController extends Controller
 
         $isAllSurveysComplete = true;
 
-        $surveysState = $surveys->map(function ($survey) {
+        $surveysState = $surveys->map(function($survey) {
             $questions = json_decode($survey->questions);
             $amountOfAnswers = count($survey->answers);
             $amountOfQuestions = count($questions);
 
 
-            if ($amountOfAnswers < $amountOfQuestions) {
+            if($amountOfAnswers < $amountOfQuestions)
+            {
                 $isAllSurveysComplete = false;
             };
 
@@ -158,8 +160,8 @@ class SurveyController extends Controller
 
             // Asignar le un id a la pregunta
             $questions = collect($survey->questions);
-            $maxId = $questions->max('id') || 0;
-            $id = array('id' => $maxId + 1);
+            $maxId = $questions->max('id');
+            $id = array('id' => (isset($maxId) ? $maxId : 0) + 1);
             $newQuestion = array_merge($id, $request->all());
             $questions->push($newQuestion);
 
@@ -210,9 +212,9 @@ class SurveyController extends Controller
 
             $survey = Survey::find($id);
 
-            $survey->name = $validated["name"];
+            $survey->name = $validated["name"]; //solo cambiaria el nombre
             // $survey->questions = $validated["questions"];
-            $survey->amount_of_images = count($validated["questions"]);
+            //$survey->amount_of_images = count($validated["questions"]);
 
             $survey->save();
         } catch (\Throwable $th) {
@@ -251,6 +253,32 @@ class SurveyController extends Controller
         return [
             'ok' => true,
             'status' => 200
+        ];
+    }
+
+    public function destroyQuestion($surveyId, $questionId)
+    {
+        try {
+            $survey = Survey::find($surveyId);
+
+            $questions = collect($survey->questions);
+            $questions = $questions->where('id', "<>", $questionId);
+
+            $survey->questions = $questions;
+            $survey->amount_of_images = count($survey->questions);
+
+            $survey->save();
+        } catch (\Throwable $th) {
+            return [
+                'ok' => false,
+                'status' => 200,
+                'error' => $th,
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'status' => 200,
         ];
     }
 }

@@ -32,6 +32,38 @@ class ResultsContrller extends Controller
         ];
     }
 
+    public function resultByUser($userId)
+    {
+        $results = collect();
+
+        $data = Result::where('user_id', $userId)->get()
+            ->groupBy("survey_id");
+
+        foreach ($data as $key => $answers) {
+            $survey = Survey::find($key);
+            $result = [
+                "surveyId" => $survey->id,
+                "surveyName" => $survey->name,
+                "allAnswers" => $answers->map(function ($answers) use ($survey) {
+                    $questions = collect($survey->questions);
+                    $answers = collect($answers->answers);
+                    $answers = $answers->map(function ($answer) use ($questions) {
+                        $res = $questions->firstWhere("id", $answer["question_id"]);
+                        unset($answer["question_id"]);
+                        return array_merge(["question" => $res["question"]], $answer);
+                    });
+                    return $answers;
+                }),
+            ];
+            $results->push($result);
+        }
+
+        return [
+            'status' => 200,
+            'data' => $results
+        ];
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -44,7 +76,7 @@ class ResultsContrller extends Controller
         $lastResultSaved = Result::where('user_id', $request->user()->id)
             ->where('survey_id', $surveyID)
             ->first();
-        
+
         $resultToSave = null;
 
         if($lastResultSaved) {
@@ -90,7 +122,7 @@ class ResultsContrller extends Controller
 
         $amountOfAnswers = $answers ? count($answers->answers) : 0;
 
-        
+
         return [
             "status" => 200,
             "data" => [
@@ -130,7 +162,7 @@ class ResultsContrller extends Controller
 
         $result->answers = json_encode($request->answers);
         $result->save();
-        
+
         return response()->json([
             'status' => 201,
             'data' => [
