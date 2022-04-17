@@ -18,7 +18,7 @@ class ResultsContrller extends Controller
     public function index(Request $request)
     {
 
-        $userResults = $request->user()->results->map(function ($answer) {
+        $userResults = $request->user()->results->map(function($answer) {
             return [
                 "id" => $answer->id,
                 "answers" => $answer->answers,
@@ -29,38 +29,6 @@ class ResultsContrller extends Controller
         return [
             "state" => 200,
             "data" => $userResults
-        ];
-    }
-
-    public function resultByUser($userId)
-    {
-        $results = collect();
-
-        $data = Result::where('user_id', $userId)->get()
-            ->groupBy("survey_id");
-
-        foreach ($data as $key => $answers) {
-            $survey = Survey::find($key);
-            $result = [
-                "surveyId" => $survey->id,
-                "surveyName" => $survey->name,
-                "allAnswers" => $answers->map(function ($answers) use ($survey) {
-                    $questions = collect($survey->questions);
-                    $answers = collect($answers->answers);
-                    $answers = $answers->map(function ($answer) use ($questions) {
-                        $res = $questions->firstWhere("id", $answer["question_id"]);
-                        unset($answer["question_id"]);
-                        return array_merge(["question" => $res["question"]], $answer);
-                    });
-                    return $answers;
-                }),
-            ];
-            $results->push($result);
-        }
-
-        return [
-            'status' => 200,
-            'data' => $results
         ];
     }
 
@@ -76,10 +44,10 @@ class ResultsContrller extends Controller
         $lastResultSaved = Result::where('user_id', $request->user()->id)
             ->where('survey_id', $surveyID)
             ->first();
-
+        
         $resultToSave = null;
 
-        if ($lastResultSaved) {
+        if($lastResultSaved) {
             $resultToSave = $lastResultSaved;
         } else {
             $resultToSave = new Result();
@@ -113,7 +81,7 @@ class ResultsContrller extends Controller
         $answers = $request->user()->result_of($survey_id);
         $amountOfQuestions = count(Survey::find($survey_id)->questions);
 
-        if (!$answers) {
+        if(!$answers) {
             return [
                 "status" => 200,
                 "data" => null
@@ -122,7 +90,7 @@ class ResultsContrller extends Controller
 
         $amountOfAnswers = $answers ? count($answers->answers) : 0;
 
-
+        
         return [
             "status" => 200,
             "data" => [
@@ -147,7 +115,7 @@ class ResultsContrller extends Controller
     {
         $user = $request->user();
         $result = Result::find($result_id);
-        if (!$user->can('update', $result)) {
+        if(!$user->can('update', $result)) {
 
             return response()->json([
                 'status' => 401,
@@ -162,7 +130,7 @@ class ResultsContrller extends Controller
 
         $result->answers = json_encode($request->answers);
         $result->save();
-
+        
         return response()->json([
             'status' => 201,
             'data' => [

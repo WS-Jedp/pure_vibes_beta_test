@@ -27,11 +27,11 @@ class ResultsSeeder extends Seeder
 
     protected $answersMock2 = [
         [
-            "question_id" => 1,
+            "question_id" => 4,
             "answer" => true,
         ],
         [
-            "question_id" => 2,
+            "question_id" => 5,
             "answer" => 5,
         ],
     ];
@@ -53,13 +53,6 @@ class ResultsSeeder extends Seeder
             ],
             [
                 "answers" => json_encode($this->answersMock2),
-                "survey_id" => 2,
-                "user_id" => 1,
-                "created_at" => now(),
-                "updated_at" => now(),
-            ],
-            [
-                "answers" => json_encode($this->answersMock),
                 "survey_id" => 2,
                 "user_id" => 1,
                 "created_at" => now(),
