@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function() {
+Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -35,17 +35,19 @@ Route::middleware('auth:sanctum')->group(function() {
         ]);
     });
 
+    Route::post('surveys/{id}/question', [SurveyController::class, 'storeQuestion']);
+    Route::delete('surveys/{surveyId}/question/{questionId}', [SurveyController::class, 'destroyQuestion']);
     Route::resource('surveys', SurveyController::class);
-    Route::prefix('surveys/state')->group(function() {
+    Route::prefix('surveys/state')->group(function () {
         Route::get('/all', [SurveyController::class, 'surveysState']);
         Route::get('/{survey}', [SurveyController::class, 'state']);
         Route::get('/user/{user}', [SurveyController::class, 'isBetaTestDoneFor']);
     });
 
+    Route::get('answers/user/{userId}', [ResultsContrller::class, 'resultByUser']);
     Route::resource('answers', ResultsContrller::class);
 
     Route::post('/invite/{user}', [InvitationController::class, 'store']);
 
     Route::post('/become/tester', [RoleController::class, 'becomeTester']);
-
 });
