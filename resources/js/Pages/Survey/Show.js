@@ -1,22 +1,45 @@
 import React, { useEffect, useState } from 'react';
+import { FaPlusCircle } from 'react-icons/fa';
 import Authenticated from '@/Layouts/Authenticated';
 import { Head, Link } from '@inertiajs/inertia-react';
+import Modal from '@/Components/Modal';
+import axios from "axios";
+
 import { QuestionAnswerType } from '../../Container/QuestionAnswerType'
 import { getQuestionAnswerData } from '../../Utils/graphDataMethods'
-
+import CreateSurvey from './form/CreateSurvey';
 
 export default function Show(props) {
+
+    const initForm = {
+        name: "",
+        questions: [
+            {
+                id: 1,
+                type: "BOOLEAN",
+                question: ""
+            }
+        ]
+    }
 
     const { survey, allSurveys } = props
 
     const [questionsData, setQuestionsData] = useState([])
+
+    const [showModal, setShowModal] = React.useState(false);
+
+    const [form, setForm] = useState({...initForm})
+    const [formError, setFormError] = useState({
+        name: false,
+        questions: [ false ]
+    })
 
     console.log(allSurveys, survey)
 
     useEffect(() => {
         let allQuestions = []
         survey.questions.forEach(question => {
-            const answersFromQuestion = survey.results.map(result => 
+            const answersFromQuestion = survey.results.map(result =>
                 result.answers.find(answer => answer.question_id == question.id))
 
             const answersGraphData = getQuestionAnswerData(answersFromQuestion.filter(answer => answer), question.type)
@@ -25,7 +48,39 @@ export default function Show(props) {
         })
         setQuestionsData(allQuestions)
     }, [])
-    
+
+    const saveSurvey = () => {
+        // console.log(form);
+        if (validateForm()) {
+            axios.post("http://127.0.0.1:8000/api/surveys", form, {
+                headers: {
+                    authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh" 
+                }
+            })
+            setShowModal(false);
+            setForm({...initForm})
+        }
+    }
+
+    const validateForm = () => {
+        let isSuccess = true;
+
+        if (form.name === "") {
+            formError.name = true
+            isSuccess = false;
+        } else formError.name = false
+
+        form.questions.forEach((quest, i) => {
+            if (quest.question === "") {
+                formError.questions[i] = true
+                isSuccess = false;
+            } else formError.questions[i] = false
+        });
+
+        setFormError({ ...formError })
+        return isSuccess;
+    }
+
     return (
         <Authenticated
             auth={props.auth}
@@ -38,7 +93,7 @@ export default function Show(props) {
             flex flex-row items-start justify-around flex-wrap
             bg-gray-200 shadow-lg my-6">
 
-                <article className='relative w-full md:w-8/12 m-2 shadow-md mt-9 
+                <article className='relative w-full md:w-8/12 m-2 shadow-md mt-9
                     flex flex-col items-start justify-start rounded-md
                 '>
                     {
@@ -85,10 +140,13 @@ export default function Show(props) {
                 </article>
 
 
-                <sidebar className="sticky mt-9 top-0 right-0 w-3/12 m-2 bg-white hidden md:flex flex-col items-start content-start 
+                <sidebar className="sticky mt-9 top-0 right-0 w-3/12 m-2 bg-white hidden md:flex flex-col items-start content-start
                     p-9 rounded-lg shadow-md min-h-[300px]
                 ">
-                    <h3 className='font-bold text-xl mb-2'>All Surveys</h3>
+                    <div className="w-[100%] flex justify-between">
+                        <h3 className='font-bold text-xl mb-2'>All Surveys</h3>
+                        <FaPlusCircle type="button" onClick={() => setShowModal(true)} size={30} className="cursor-pointer hover:text-purple-400" />
+                    </div>
                     <ol className='list-disc'>
                         {
                             allSurveys.map(currSurvey => (
@@ -103,9 +161,17 @@ export default function Show(props) {
                         }
                     </ol>
                 </sidebar>
-               
-            </section>
 
+            </section>
+            <Modal title="Create a new survey" showModal={showModal} setShowModal={setShowModal} onSave={()=>saveSurvey()}>
+                <CreateSurvey
+                    form={form}
+                    setForm={setForm}
+                    formError={formError}
+                    setFormError={setFormError}
+                    initForm={initForm}
+                />
+            </Modal>
         </Authenticated>
     );
 }
