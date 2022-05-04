@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Modal({title, showModal, setShowModal, onSave = null, children}) {
+export default function Modal({title, showModal, setShowModal, onSave = null, nameSave = "Save", children}) {
 //   const [showModal, setShowModal] = React.useState(false);
   return (
     <>
@@ -27,7 +27,7 @@ export default function Modal({title, showModal, setShowModal, onSave = null, ch
                   </button>
                 </div>
                 {/*body*/}
-                <div className="scroll-bar max-h-[35rem] overflow-hidden relative p-6 flex-auto overflow-y-scroll">
+                <div className="scroll-bar max-h-[35rem] min-w-[20rem] overflow-hidden relative p-6 flex-auto overflow-y-scroll">
                     {children}
                 </div>
                 {/*footer*/}
@@ -41,7 +41,7 @@ export default function Modal({title, showModal, setShowModal, onSave = null, ch
                     </button>
                     <button type='submit' className='relativie flex items-center p-3 rounded-xl my-4 shadow-md text-white justify-center bg-gradient-to-r from-purple-400 to-cyan-300
                         duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl
-                    ' onClick={() => onSave()}>Create</button>
+                    ' onClick={() => onSave()}>{nameSave}</button>
                   {/* <button
                     className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"

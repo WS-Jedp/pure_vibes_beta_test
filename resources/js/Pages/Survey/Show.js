@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlusCircle } from 'react-icons/fa';
+import { FaPlusCircle, FaPenAlt, FaTrash } from 'react-icons/fa';
 import Authenticated from '@/Layouts/Authenticated';
 import { Head, Link } from '@inertiajs/inertia-react';
 import Modal from '@/Components/Modal';
 import axios from "axios";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { QuestionAnswerType } from '../../Container/QuestionAnswerType'
 import { getQuestionAnswerData } from '../../Utils/graphDataMethods'
 import CreateSurvey from './form/CreateSurvey';
+import ToastAlert from '@/Components/Toast';
+import EditSurvey from './form/EditSurvey';
 
 export default function Show(props) {
 
@@ -26,7 +30,9 @@ export default function Show(props) {
 
     const [questionsData, setQuestionsData] = useState([])
 
-    const [showModal, setShowModal] = React.useState(false);
+    const [curretSurvey, setCurretSurvey] = React.useState({...initForm, id:0});
+    const [showModalCreate, setShowModalCreate] = React.useState(false);
+    const [showModalEdit, setShowModalEdit] = React.useState(false);
 
     const [form, setForm] = useState({...initForm})
     const [formError, setFormError] = useState({
@@ -49,28 +55,79 @@ export default function Show(props) {
         setQuestionsData(allQuestions)
     }, [])
 
-    const saveSurvey = () => {
-        // console.log(form);
-        if (validateForm()) {
-            axios.post("http://127.0.0.1:8000/api/surveys", form, {
-                headers: {
-                    authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh" 
-                }
-            })
-            setShowModal(false);
-            setForm({...initForm})
+    const createSurvey = async () => {
+        if (validateForm(form)) {
+            await ToastAlert(
+                "",
+                "promise",
+                axios.post("http://127.0.0.1:8000/api/surveys", form, {
+                    headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
+                })
+                    .then(({ data }) => {
+                        if (data.ok) {
+                            setShowModal(false);
+                            window.location.href = `/survey/${data.data.id}`
+                            // setForm({...initForm})
+                        } else throw new Error("Data invalid")
+                    }),
+                "Successful registration",
+                "Error while registering, check the data"
+            )
+        } else {
+            ToastAlert("Enter the data correctly", "warning")
+        }
+        // setSentForm(false)
+    }
+
+    const updateSurvey = async () => {
+        if (validateForm(curretSurvey)) {
+            console.log(curretSurvey, " send");
+            await ToastAlert(
+                "",
+                "promise",
+                axios.put(`http://127.0.0.1:8000/api/surveys/${curretSurvey.id}`, curretSurvey, {
+                    headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
+                })
+                    .then(({ data }) => {
+                        // alert(data.ok);
+                        if (data.ok) {
+                            setShowModalEdit(false);
+                            window.location.reload();
+                        } else throw new Error("Data invalid")
+                    }),
+                "Successful registration",
+                "Error while registering, check the data"
+            )
+        } else {
+            ToastAlert("Enter the data correctly", "warning")
         }
     }
 
-    const validateForm = () => {
+    const deleteSurvey = async (item) => {
+        await ToastAlert(
+            "",
+            "promise",
+            axios.delete(`http://127.0.0.1:8000/api/surveys/${item.id}`, {
+                headers: {Authorization: "Bearer 6|bo99qmUO88ObvhMs1JEmKWLpGDh5lLDtDH2pAw1f"}
+            })
+                .then(({ data }) => {
+                    if (data.ok) window.location.href = "/survey"
+                    else throw new Error("Error deleting try again later");
+                }).catch(e=>console.log(e, " wwww")),
+            "Successful removal",
+            "Error deleting try again later"
+        )
+    }
+
+    const validateForm = (item) => {
         let isSuccess = true;
 
-        if (form.name === "") {
+        if (item.name === "") {
             formError.name = true
             isSuccess = false;
         } else formError.name = false
 
-        form.questions.forEach((quest, i) => {
+        item.questions.forEach((quest, i) => {
             if (quest.question === "") {
                 formError.questions[i] = true
                 isSuccess = false;
@@ -85,7 +142,21 @@ export default function Show(props) {
         <Authenticated
             auth={props.auth}
             errors={props.errors}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{survey.name}</h2>}
+            header={
+                <div className="flex">
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight border-r-2 pr-4">
+                        {survey.name}
+                    </h2>
+                    <FaPenAlt type="button" onClick={() => {
+                        setCurretSurvey({...survey})
+                        setShowModalEdit(true)
+                    }} size={20} className="ml-4 cursor-pointer text-cyan-500" />
+                    <FaTrash type="button" onClick={() =>{
+                        deleteSurvey(survey)
+                    }} size={20} className="ml-4 cursor-pointer text-red-500" />
+                </div>
+
+            }
         >
             <Head title={survey.name} />
 
@@ -145,7 +216,7 @@ export default function Show(props) {
                 ">
                     <div className="w-[100%] flex justify-between">
                         <h3 className='font-bold text-xl mb-2'>All Surveys</h3>
-                        <FaPlusCircle type="button" onClick={() => setShowModal(true)} size={30} className="cursor-pointer hover:text-purple-400" />
+                        <FaPlusCircle type="button" onClick={() => setShowModalCreate(true)} size={30} className="cursor-pointer hover:text-purple-400" />
                     </div>
                     <ol className='list-disc'>
                         {
@@ -163,7 +234,13 @@ export default function Show(props) {
                 </sidebar>
 
             </section>
-            <Modal title="Create a new survey" showModal={showModal} setShowModal={setShowModal} onSave={()=>saveSurvey()}>
+            <Modal
+                title="Create a new survey"
+                nameSave="Create"
+                showModal={showModalCreate}
+                setShowModal={setShowModalCreate}
+                onSave={() => createSurvey()}
+            >
                 <CreateSurvey
                     form={form}
                     setForm={setForm}
@@ -172,6 +249,22 @@ export default function Show(props) {
                     initForm={initForm}
                 />
             </Modal>
+            <Modal
+                title="Edit survey"
+                nameSave="Save"
+                showModal={showModalEdit}
+                setShowModal={setShowModalEdit}
+                onSave={() => updateSurvey()}
+            >
+                <EditSurvey
+                    form={curretSurvey}
+                    setForm={setCurretSurvey}
+                    formError={formError}
+                    setFormError={setFormError}
+                    initForm={initForm}
+                />
+            </Modal>
+            <ToastContainer />
         </Authenticated>
     );
 }
