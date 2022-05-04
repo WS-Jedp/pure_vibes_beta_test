@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlusCircle, FaPenAlt, FaTrash } from 'react-icons/fa';
+import { FaPlusCircle, FaPenAlt, FaTrash, FaListUl } from 'react-icons/fa';
 import Authenticated from '@/Layouts/Authenticated';
 import { Head, Link } from '@inertiajs/inertia-react';
 import Modal from '@/Components/Modal';
@@ -39,6 +39,7 @@ export default function Show(props) {
     const [curretSurvey, setCurretSurvey] = React.useState({...initForm, id:0});
     const [showModalCreate, setShowModalCreate] = React.useState(false);
     const [showModalEdit, setShowModalEdit] = React.useState(false);
+    const [showSurveyList, setShowSurveyList] = useState(false);
 
     const [form, setForm] = useState({...initForm})
     const [formQuestion, setFormQuestion] = useState({ ...initFormQuestion })
@@ -47,10 +48,15 @@ export default function Show(props) {
         name: false,
         questions: [ false ]
     })
+
     const [formQuestionError, setFormQuestionError] = useState({
         type: false,
         question: false
     })
+
+    const toggleSurveyList = () => {
+        setShowSurveyList(!showSurveyList)
+    }
 
     useEffect(() => {
         let allQuestions = []
@@ -230,17 +236,50 @@ export default function Show(props) {
             auth={props.auth}
             errors={props.errors}
             header={
-                <div className="flex">
+                <div className="relative flex justify-between md:justify-start">
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight border-r-2 pr-4">
                         {survey.name}
                     </h2>
-                    <FaPenAlt type="button" onClick={() => {
-                        setCurretSurvey({...survey, questions: [...survey.questions]})
-                        setShowModalEdit(true)
-                    }} size={20} className="ml-4 cursor-pointer text-cyan-500" />
-                    <FaTrash type="button" onClick={() =>{
-                        deleteSurvey(survey)
-                    }} size={20} className="ml-4 cursor-pointer text-red-500" />
+
+                    <div className="flex">
+                        <FaPenAlt type="button" onClick={() => {
+                            setCurretSurvey({...survey, questions: [...survey.questions]})
+                            setShowModalEdit(true)
+                        }} size={20} className="ml-4 cursor-pointer text-cyan-500" />
+                        <FaTrash type="button" onClick={() =>{
+                            deleteSurvey(survey)
+                        }} size={20} className="ml-4 cursor-pointer text-red-500" />
+                    </div>
+
+                    <div className="md:hidden">
+                        <FaListUl type="button" onClick={() =>{ toggleSurveyList() }} size={25} className="ml-4 cursor-pointer" />
+                    </div>
+
+                    {
+                        showSurveyList && (
+                            <sidebar className="absolute z-10 mt-9 top-0 m-2 bg-white md:hidden flex-col items-start content-start
+                                p-9 rounded-lg shadow-md min-h-[300px]
+                            ">
+                                <div className="w-[100%] flex justify-between">
+                                    <h3 className='font-bold text-xl mb-2'>All Surveys</h3>
+                                    <FaPlusCircle type="button" onClick={() => setShowModalCreate(true)} size={30} className="cursor-pointer hover:text-purple-400" />
+                                </div>
+                                <ol className='list-disc'>
+                                    {
+                                        allSurveys.map(currSurvey => (
+                                            survey.id === currSurvey.id ? (
+                                                    <li className='first:mt-0 hover:cursor-default mt-3 underline font-bold text-slate-300'>{currSurvey.name}</li>
+                                                ) : (
+                                                    <Link href={(route('survey.show', currSurvey.id))}>
+                                                        <li className="mt-3 ease-in-out duration-100 hover:translate-x-2 hover:text-purple-400" >{currSurvey.name}</li>
+                                                    </Link>
+                                                )
+                                        ))
+                                    }
+                                </ol>
+                            </sidebar>
+                        )
+                    }
                 </div>
 
             }

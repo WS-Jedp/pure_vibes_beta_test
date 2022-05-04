@@ -82,7 +82,7 @@ export default function Results(props) {
                     '>
                         {
                             usersWithSurveyUnfinished.length > 0 ? usersWithSurveyUnfinished.map(user => (
-                                <article key={user.id} className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
+                                <a href={`/results/${user.id}`} key={user.id} className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
                                     min-h-[90px] flex flex-col items-start justify-start p-6 rounded-md
                                     ease-in-out duration-500
                                     hover:scale-[1.03] hover:shadowo-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
@@ -90,7 +90,7 @@ export default function Results(props) {
                                     <h3 className='group-hover:text-white font-bold mb-3 divide-y'>{user.name}</h3>
                                     <small className='font-bold group-hover:text-white'>{user.email}</small>
                                     <p className='text-sm group-hover:text-white'>Surveys done: {user.amountOfResults}/{TOTAL_OF_SURVEYS}</p>
-                                </article>
+                                </a>
                             )) : (
                                 <p>We can't find users</p>
                             )
