@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Authenticated from '@/Layouts/Authenticated';
-import { Head, Link } from '@inertiajs/inertia-react';
+import { Head } from '@inertiajs/inertia-react';
 
 export default function Results(props) {
 

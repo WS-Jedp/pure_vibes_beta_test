@@ -1,7 +1,16 @@
 import React from "react";
 
-export default function Modal({title, showModal, setShowModal, onSave = null, nameSave = "Save", message, messageColor="text-amber-400", children}) {
-//   const [showModal, setShowModal] = React.useState(false);
+export default function Modal({
+    title,
+    showModal,
+    setShowModal,
+    onSave = null,
+    nameSave = "Save",
+    message,
+    messageColor = "text-amber-400",
+    children
+}) {
+
   return (
     <>
       {showModal ? (
@@ -38,7 +47,6 @@ export default function Modal({title, showModal, setShowModal, onSave = null, na
                             <p className={`${messageColor}`}>
                                 {message}
                                 </p>
-                                {/* <br/> */}
                             </>
                         )
                     }
@@ -55,13 +63,6 @@ export default function Modal({title, showModal, setShowModal, onSave = null, na
                             duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl
                         ' onClick={() => onSave()}>{nameSave}</button>
                     </div>
-                  {/* <button
-                    className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Save
-                  </button> */}
                 </div>
               </div>
             </div>

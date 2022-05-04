@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlusCircle, FaPenAlt, FaTrash, FaListUl } from 'react-icons/fa';
+import { FaListUl } from 'react-icons/fa';
 import Authenticated from '@/Layouts/Authenticated';
-import { Head, Link } from '@inertiajs/inertia-react';
-import Modal from '@/Components/Modal';
-import axios from "axios";
-import { ToastContainer } from 'react-toastify';
+import { Head } from '@inertiajs/inertia-react';
 import 'react-toastify/dist/ReactToastify.css';
-import Swal from 'sweetalert2'
-
-import { QuestionAnswerType } from '../../Container/QuestionAnswerType'
-import { getQuestionAnswerData } from '../../Utils/graphDataMethods'
-import ToastAlert from '@/Components/Toast';
+import SidebarSurveys from '@/Components/SidebarSurveys';
 
 export default function ShowByUser(props) {
 
@@ -22,14 +15,9 @@ export default function ShowByUser(props) {
         setShowSurveyList(!showSurveyList)
     }
 
-
     useEffect(() => {
         if(allSurveys.length > 0) setSurveySelected({...allSurveys[0]})
     },[])
-
-    console.log(user);
-    console.log(surveySeleted);
-    // console.log(allSurveys);
 
     return (
         <Authenticated
@@ -41,38 +29,21 @@ export default function ShowByUser(props) {
                         {user.name}
                     </h2>
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight pl-4">{surveySeleted.surveyName}</h2>
-                    {/* <FaPenAlt type="button" onClick={() => {
-                        setCurretSurvey({...survey, questions: [...survey.questions]})
-                        setShowModalEdit(true)
-                    }} size={20} className="ml-4 cursor-pointer text-cyan-500" />
-                     */}
                     <div>
                         <FaListUl type="button" onClick={() =>{ toggleSurveyList() }} size={25} className="ml-4 cursor-pointer md:hidden" />
                     </div>
 
                     {
                         showSurveyList && (
-                        <sidebar className="absolute z-10 mt-9 top-0 m-2 bg-white  md:hidden flex-col items-start content-start
-                            p-9 rounded-lg shadow-md min-h-[300px]
-                        ">
-                            <div className="w-[100%] flex justify-between">
-                                <h3 className='font-bold text-xl mb-2'>Answered surveys</h3>
-                            </div>
-                            <ol className='list-disc'>
-                                {
-                                    allSurveys.map(currSurvey => (
-                                        surveySeleted.surveyId === currSurvey.surveyId ? (
-                                                <li className='first:mt-0 hover:cursor-default mt-3 underline font-bold text-slate-300'>{currSurvey.surveyName}</li>
-                                            ) : (
-                                                <li onClick={() => {
-                                                    setSurveySelected({ ...currSurvey })
-                                                    toggleSurveyList()
-                                                    }} className="cursor-pointer mt-3 ease-in-out duration-100 hover:translate-x-2 hover:text-purple-400" >{currSurvey.surveyName}</li>
-                                            )
-                                    ))
-                                }
-                            </ol>
-                        </sidebar>
+                            <SidebarSurveys
+                                title="Answered surveys"
+                                allSurveys={allSurveys}
+                                currSurvey={surveySeleted}
+                                isMini={true}
+                                isResult={true}
+                                setSurveySelected={(item)=>setSurveySelected({ ...item })}
+                                toggleSurveyList={()=>toggleSurveyList()}
+                            />
                         )
                     }
                 </div>
@@ -90,8 +61,8 @@ export default function ShowByUser(props) {
                 '>
                     {
                         surveySeleted.allAnswers.map((answers, i) => (
-                                <div className='w-full bg-white shadow divider-y flex flex-col items-start justify-start
-                                    first:mt-0 mt-3 flex flex-col items-start justify-start rounded-md p-9
+                                <div className='w-full bg-white shadow divider-y items-start justify-start
+                                    first:mt-0 mt-3 flex flex-col rounded-md p-9
                                 '>
                                     <h2 className='font-bold text-2xl mb-4'>Answers #{i+1}</h2>
 
@@ -99,10 +70,8 @@ export default function ShowByUser(props) {
                                         answers.map((answer, i) => (
                                             <div className='w-full bg-white shadow divider-y p-4 mb-5'>
                                                 <p className='font-bold text-base mb-3'>{answer.question}</p>
-
                                                 <div>
                                                     <p>{answer.text}</p>
-                                                    {/* <QuestionAnswerType type={answer.question.type} data={answer.answersGraphData}></QuestionAnswerType> */}
                                                 </div>
                                             </div>
                                         ))
@@ -112,26 +81,14 @@ export default function ShowByUser(props) {
                     }
                 </article>
 
-
-                <sidebar className="sticky mt-9 top-0 right-0 w-3/12 m-2 bg-white hidden md:flex flex-col items-start content-start
-                    p-9 rounded-lg shadow-md min-h-[300px]
-                ">
-                    <div className="w-[100%] flex justify-between">
-                        <h3 className='font-bold text-xl mb-2'>Answered surveys</h3>
-                    </div>
-                    <ol className='list-disc'>
-                        {
-                            allSurveys.map(currSurvey => (
-                                surveySeleted.surveyId === currSurvey.surveyId ? (
-                                        <li className='first:mt-0 hover:cursor-default mt-3 underline font-bold text-slate-300'>{currSurvey.surveyName}</li>
-                                    ) : (
-                                            <li onClick={()=>setSurveySelected({...currSurvey})} className="cursor-pointer mt-3 ease-in-out duration-100 hover:translate-x-2 hover:text-purple-400" >{currSurvey.surveyName}</li>
-                                    )
-                            ))
-                        }
-                    </ol>
-                </sidebar>
-
+                <SidebarSurveys
+                    title="Answered surveys"
+                    allSurveys={allSurveys}
+                    currSurvey={surveySeleted}
+                    isResult={true}
+                    setSurveySelected={(item)=>setSurveySelected({ ...item })}
+                    toggleSurveyList={()=>toggleSurveyList()}
+                />
             </section>
         </Authenticated>
     );
