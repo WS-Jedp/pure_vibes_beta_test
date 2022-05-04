@@ -212,9 +212,9 @@ class SurveyController extends Controller
 
             $survey = Survey::find($id);
 
-            $survey->name = $validated["name"]; //solo cambiaria el nombre
-            // $survey->questions = $validated["questions"];
-            //$survey->amount_of_images = count($validated["questions"]);
+            $survey->name = $validated["name"];
+            $survey->questions = $validated["questions"];
+            $survey->amount_of_images = count($validated["questions"]);
 
             $survey->save();
         } catch (\Throwable $th) {

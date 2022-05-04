@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Modal({title, showModal, setShowModal, onSave = null, nameSave = "Save", children}) {
+export default function Modal({title, showModal, setShowModal, onSave = null, nameSave = "Save", message, messageColor="text-amber-400", children}) {
 //   const [showModal, setShowModal] = React.useState(false);
   return (
     <>
@@ -27,21 +27,34 @@ export default function Modal({title, showModal, setShowModal, onSave = null, na
                   </button>
                 </div>
                 {/*body*/}
-                <div className="scroll-bar max-h-[35rem] min-w-[20rem] overflow-hidden relative p-6 flex-auto overflow-y-scroll">
+                <div className="scroll-bar max-h-[20rem] md:max-h-[35rem] min-w-[20rem] overflow-hidden relative p-6 flex-auto overflow-y-scroll">
                     {children}
                 </div>
                 {/*footer*/}
-                <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
-                    <button
-                        className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                        type="button"
-                        onClick={() => setShowModal(false)}
-                    >
-                        Close
-                    </button>
-                    <button type='submit' className='relativie flex items-center p-3 rounded-xl my-4 shadow-md text-white justify-center bg-gradient-to-r from-purple-400 to-cyan-300
-                        duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl
-                    ' onClick={() => onSave()}>{nameSave}</button>
+                <div className="flex-column items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+                    {
+                        message && (
+                            <>
+                            <p className={`${messageColor}`}>
+                                {message}
+                                </p>
+                                {/* <br/> */}
+                            </>
+                        )
+                    }
+
+                    <div className="flex items-center justify-end">
+                        <button
+                            className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                            type="button"
+                            onClick={() => setShowModal(false)}
+                        >
+                            Close
+                        </button>
+                        <button type='submit' className='relativie flex items-center p-3 rounded-xl my-4 shadow-md text-white justify-center bg-gradient-to-r from-purple-400 to-cyan-300
+                            duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl
+                        ' onClick={() => onSave()}>{nameSave}</button>
+                    </div>
                   {/* <button
                     className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"

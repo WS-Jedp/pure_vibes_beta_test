@@ -826,6 +826,15 @@ select {
 .max-h-\[35rem\] {
   max-height: 35rem;
 }
+.max-h-\[10rem\] {
+  max-height: 10rem;
+}
+.max-h-\[15rem\] {
+  max-height: 15rem;
+}
+.max-h-\[20rem\] {
+  max-height: 20rem;
+}
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1404,6 +1413,18 @@ select {
   --tw-text-opacity: 1;
   color: rgb(6 182 212 / var(--tw-text-opacity));
 }
+.text-amber-400 {
+  --tw-text-opacity: 1;
+  color: rgb(251 191 36 / var(--tw-text-opacity));
+}
+.text-yellow-400 {
+  --tw-text-opacity: 1;
+  color: rgb(250 204 21 / var(--tw-text-opacity));
+}
+.text-yellow-500 {
+  --tw-text-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-text-opacity));
+}
 .underline {
   -webkit-text-decoration-line: underline;
           text-decoration-line: underline;
@@ -1787,6 +1808,18 @@ select {
     height: 5rem;
   }
 
+  .sm\:max-h-\[25rem\] {
+    max-height: 25rem;
+  }
+
+  .sm\:max-h-\[15rem\] {
+    max-height: 15rem;
+  }
+
+  .sm\:max-h-\[10rem\] {
+    max-height: 10rem;
+  }
+
   .sm\:max-w-md {
     max-width: 28rem;
   }
@@ -1838,6 +1871,18 @@ select {
     display: flex;
   }
 
+  .md\:max-h-\[35rem\] {
+    max-height: 35rem;
+  }
+
+  .md\:max-h-\[25rem\] {
+    max-height: 25rem;
+  }
+
+  .md\:max-h-\[10rem\] {
+    max-height: 10rem;
+  }
+
   .md\:w-8\/12 {
     width: 66.666667%;
   }
@@ -1860,6 +1905,10 @@ select {
 
   .md\:p-6 {
     padding: 1.5rem;
+  }
+
+  .md\:first-letter\:max-h-\[35rem\]::first-letter {
+    max-height: 35rem;
   }
 }
 @media (min-width: 1024px) {

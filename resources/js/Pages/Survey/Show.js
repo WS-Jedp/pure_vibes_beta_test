@@ -6,6 +6,7 @@ import Modal from '@/Components/Modal';
 import axios from "axios";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2'
 
 import { QuestionAnswerType } from '../../Container/QuestionAnswerType'
 import { getQuestionAnswerData } from '../../Utils/graphDataMethods'
@@ -26,6 +27,11 @@ export default function Show(props) {
         ]
     }
 
+    const initFormQuestion = {
+        type: "BOOLEAN",
+        question: ""
+    }
+
     const { survey, allSurveys } = props
 
     const [questionsData, setQuestionsData] = useState([])
@@ -35,12 +41,16 @@ export default function Show(props) {
     const [showModalEdit, setShowModalEdit] = React.useState(false);
 
     const [form, setForm] = useState({...initForm})
+    const [formQuestion, setFormQuestion] = useState({ ...initFormQuestion })
+
     const [formError, setFormError] = useState({
         name: false,
         questions: [ false ]
     })
-
-    console.log(allSurveys, survey)
+    const [formQuestionError, setFormQuestionError] = useState({
+        type: false,
+        question: false
+    })
 
     useEffect(() => {
         let allQuestions = []
@@ -55,21 +65,25 @@ export default function Show(props) {
         setQuestionsData(allQuestions)
     }, [])
 
+    const onInputChange = ({ name, value }) => {
+        setFormQuestion({...formQuestion, [name]: value})
+    }
+
     const createSurvey = async () => {
         if (validateForm(form)) {
             await ToastAlert(
                 "",
                 "promise",
-                axios.post("http://127.0.0.1:8000/api/surveys", form, {
+                axios.post("http://192.168.0.5:8000/api/surveys", form, {
                     headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
                 })
                     .then(({ data }) => {
                         if (data.ok) {
-                            setShowModal(false);
+                            setShowModalCreate(false);
                             window.location.href = `/survey/${data.data.id}`
                             // setForm({...initForm})
                         } else throw new Error("Data invalid")
-                    }),
+                    }).catch(e=>console.log(e, " aaaaaaaaaaaa")),
                 "Successful registration",
                 "Error while registering, check the data"
             )
@@ -81,42 +95,70 @@ export default function Show(props) {
 
     const updateSurvey = async () => {
         if (validateForm(curretSurvey)) {
-            console.log(curretSurvey, " send");
-            await ToastAlert(
-                "",
-                "promise",
-                axios.put(`http://127.0.0.1:8000/api/surveys/${curretSurvey.id}`, curretSurvey, {
-                    headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
-                })
-                    .then(({ data }) => {
-                        // alert(data.ok);
-                        if (data.ok) {
-                            setShowModalEdit(false);
-                            window.location.reload();
-                        } else throw new Error("Data invalid")
-                    }),
-                "Successful registration",
-                "Error while registering, check the data"
-            )
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, save!'
+              }).then(async(result) => {
+                  if (result.isConfirmed) {
+
+                    await ToastAlert(
+                        "",
+                        "promise",
+                        axios.put(`http://192.168.0.5:8000/api/surveys/${curretSurvey.id}`, curretSurvey, {
+                            headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
+                        })
+                            .then(({ data }) => {
+                                // alert(data.ok);
+                                if (data.ok) {
+                                    setShowModalEdit(false);
+                                    window.location.reload();
+                                } else throw new Error("Data invalid")
+                            }).catch(e=>console.log(e, " wwww")),
+                        "Successful registration",
+                        "Error while registering, check the data"
+                    )
+                }
+              })
         } else {
             ToastAlert("Enter the data correctly", "warning")
         }
     }
 
-    const deleteSurvey = async (item) => {
-        await ToastAlert(
-            "",
-            "promise",
-            axios.delete(`http://127.0.0.1:8000/api/surveys/${item.id}`, {
-                headers: {Authorization: "Bearer 6|bo99qmUO88ObvhMs1JEmKWLpGDh5lLDtDH2pAw1f"}
-            })
-                .then(({ data }) => {
-                    if (data.ok) window.location.href = "/survey"
-                    else throw new Error("Error deleting try again later");
-                }).catch(e=>console.log(e, " wwww")),
-            "Successful removal",
-            "Error deleting try again later"
-        )
+    const deleteSurvey = (item) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+          }).then(async(result) => {
+              if (result.isConfirmed) {
+
+                await ToastAlert(
+                    "",
+                    "promise",
+                    axios.delete(`http://192.168.0.5:8000/api/surveys/${item.id}`, {
+                        headers: {Authorization: "Bearer 6|bo99qmUO88ObvhMs1JEmKWLpGDh5lLDtDH2pAw1f"}
+                    })
+                        .then(({ data }) => {
+                            if (data.ok) {
+                                window.location.href = "/survey"
+                            }
+                            else throw new Error("Error deleting try again later");
+                        }).catch(e=>console.log(e, " wwww")),
+                    "Successful removal",
+                    "Error deleting try again later"
+                )
+            }
+          })
     }
 
     const validateForm = (item) => {
@@ -138,6 +180,51 @@ export default function Show(props) {
         return isSuccess;
     }
 
+    const addQuestion = async() => {
+        if (validateFormQuestion(formQuestion)) {
+            await ToastAlert(
+                "",
+                "promise",
+                axios.post(`http://192.168.0.5:8000/api/surveys/${survey.id}/question`, formQuestion, {
+                    headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
+                })
+                    .then(({ data }) => {
+                        if (data.ok) {
+                            setShowModalCreate(false);
+                            window.location.reload()
+                        } else throw new Error("Data invalid")
+                    }).catch(e=>console.log(e, " aaaaaaaaaaaa")),
+                "Successful registration",
+                "Error while registering, check the data"
+            )
+        } else {
+            ToastAlert("Enter the data correctly", "warning")
+            setTimeout(() => {
+                setFormQuestionError({
+                    type: false,
+                    question: false
+                })
+            }, 3000);
+        }
+    }
+
+    const validateFormQuestion = (item) => {
+        let isSuccess = true;
+
+        if (item.type === "") {
+            formQuestionError.type = true
+            isSuccess = false;
+        } else formQuestionError.type = false
+
+        if (item.question === "") {
+            formQuestionError.question = true
+            isSuccess = false;
+        } else formQuestionError.question = false
+
+        setFormQuestionError({ ...formQuestionError })
+        return isSuccess;
+    }
+
     return (
         <Authenticated
             auth={props.auth}
@@ -148,7 +235,7 @@ export default function Show(props) {
                         {survey.name}
                     </h2>
                     <FaPenAlt type="button" onClick={() => {
-                        setCurretSurvey({...survey})
+                        setCurretSurvey({...survey, questions: [...survey.questions]})
                         setShowModalEdit(true)
                     }} size={20} className="ml-4 cursor-pointer text-cyan-500" />
                     <FaTrash type="button" onClick={() =>{
@@ -188,22 +275,22 @@ export default function Show(props) {
                         <h4 className='font-bold text-xl'>Create a new question</h4>
                         <form className='w-full relative'>
                             <label htmlFor='question' className='my-2 w-full'>
-                                <p className='font-bold'>
+                                <p className={`font-bold ${formQuestionError.question?'text-red-500':''}`}>
                                     New Question
                                 </p>
-                                <input className='w-full' id="question" type="text" placeholder='Write the new question..'></input>
+                                <input name='question' value={formQuestion.question} onChange={({target})=>onInputChange(target)} id="question" type="text" placeholder='Write the new question..'></input>
                             </label>
                             <label className='my-2'>
-                                <p className='font-bold'>
+                                <p className={`font-bold ${formQuestionError.type?'text-red-500':''}`}>
                                     Type Of Question
                                 </p>
-                                <select>
+                                <select name='type' value={formQuestion.type} onChange={({target})=>onInputChange(target)}>
                                     <option value="BOOLEAN"  selected>Boolean (Yes/No)</option>
                                     <option value="RATE" >Rate</option>
                                     <option value="TEXT" >Text</option>
                                 </select>
                             </label>
-                            <button type='submit' className='relativie flex items-center p-3 rounded-xl my-4 shadow-md text-white justify-center bg-gradient-to-r from-purple-400 to-cyan-300
+                            <button onClick={()=>addQuestion()} type='button' className='relativie flex items-center p-3 rounded-xl my-4 shadow-md text-white justify-center bg-gradient-to-r from-purple-400 to-cyan-300
                                 duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl
                             '>Create question</button>
                         </form>
@@ -251,6 +338,8 @@ export default function Show(props) {
             </Modal>
             <Modal
                 title="Edit survey"
+                message="When you save the changes you will not be able to revert them"
+                messageColor="text-yellow-500"
                 nameSave="Save"
                 showModal={showModalEdit}
                 setShowModal={setShowModalEdit}

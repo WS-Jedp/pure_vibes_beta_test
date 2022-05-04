@@ -8,27 +8,6 @@ import { getQuestionAnswerData } from '../../../Utils/graphDataMethods'
 
 export default function CreateSurvey({form, setForm, initForm, formError, setFormError}) {
 
-    // const { survey, allSurveys } = props
-
-    // const [questionsData, setQuestionsData] = useState([])
-
-    // const [showModal, setShowModal] = React.useState(false);
-
-    // console.log(allSurveys, survey)
-
-    // useEffect(() => {
-    //     let allQuestions = []
-    //     survey.questions.forEach(question => {
-    //         const answersFromQuestion = survey.results.map(result =>
-    //             result.answers.find(answer => answer.question_id == question.id))
-
-    //         const answersGraphData = getQuestionAnswerData(answersFromQuestion.filter(answer => answer), question.type)
-
-    //         allQuestions.push({question, answersGraphData})
-    //     })
-    //     setQuestionsData(allQuestions)
-    // }, [])
-
     // const [form, setForm] = useState({...initForm})
 
     const onInputNameChange = ({ name, value }) => {

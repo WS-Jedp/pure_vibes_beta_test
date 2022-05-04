@@ -7,28 +7,6 @@ import { QuestionAnswerType } from '../../../Container/QuestionAnswerType'
 import { getQuestionAnswerData } from '../../../Utils/graphDataMethods'
 
 export default function EditSurvey({form, setForm, initForm, formError, setFormError}) {
-
-    // const { survey, allSurveys } = props
-
-    // const [questionsData, setQuestionsData] = useState([])
-
-    // const [showModal, setShowModal] = React.useState(false);
-
-    // console.log(allSurveys, survey)
-
-    // useEffect(() => {
-    //     let allQuestions = []
-    //     survey.questions.forEach(question => {
-    //         const answersFromQuestion = survey.results.map(result =>
-    //             result.answers.find(answer => answer.question_id == question.id))
-
-    //         const answersGraphData = getQuestionAnswerData(answersFromQuestion.filter(answer => answer), question.type)
-
-    //         allQuestions.push({question, answersGraphData})
-    //     })
-    //     setQuestionsData(allQuestions)
-    // }, [])
-
     // const [form, setForm] = useState({...initForm})
 
     const onInputNameChange = ({ name, value }) => {
@@ -40,12 +18,12 @@ export default function EditSurvey({form, setForm, initForm, formError, setFormE
         setForm({ ...form })
     }
 
-    const addQuestion = () => {
-        form.questions.push({...initForm.questions[0]});
-        formError.questions.push(false);
-        setForm({...form})
-        setFormError({...formError})
-    }
+    // const addQuestion = () => {
+    //     form.questions.push({...initForm.questions[0]});
+    //     formError.questions.push(false);
+    //     setForm({...form})
+    //     setFormError({...formError})
+    // }
 
     const delQuestion = (index) => {
         form.questions.splice(index, 1);
