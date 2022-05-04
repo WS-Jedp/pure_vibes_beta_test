@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Api\ResultsContrller;
 use App\Http\Requests\Results\ResultRequest;
 use App\Models\Result;
 use App\Models\Survey;
@@ -25,37 +26,10 @@ class ResultController extends Controller
 
     public function show($userId)
     {
-        $allSurveys = collect();
-
+        $results = new ResultsContrller();
+        $allSurveys = $results->resultByUser($userId)["data"];
         $user = User::find($userId);
-
-        $data = Result::where('user_id', $userId)->get()
-            ->groupBy("survey_id");
-
-        foreach ($data as $key => $answers) {
-            $survey = Survey::find($key);
-            $result = [
-                "surveyId" => $survey->id,
-                "surveyName" => $survey->name,
-                "allAnswers" => $answers->map(function ($answers) use ($survey) {
-                    $questions = collect($survey->questions);
-                    $answers = collect($answers->answers);
-                    $answers = $answers->map(function ($answer) use ($questions) {
-                        $res = $questions->firstWhere("id", $answer["question_id"]);
-                        unset($answer["question_id"]);
-                        return array_merge(["question" => $res["question"]], $answer);
-                    });
-                    return $answers;
-                }),
-            ];
-            $allSurveys->push($result);
-        }
-
-        // return [
-        //     'status' => 200,
-        //     'data' => $results
-        // ];
-
+        
         return Inertia::render('Results/Show', [
             "user" => $user,
             "allSurveys" => $allSurveys,
