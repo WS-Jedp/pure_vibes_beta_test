@@ -148,7 +148,7 @@ class SurveySeeder extends Seeder
             [
                 "name" => "Home Tab",
                 "questions" => json_encode($this->questionsSurveyHomeSection),
-                "amount_of_images" => 3,
+                "amount_of_images" => 2,
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
@@ -161,14 +161,14 @@ class SurveySeeder extends Seeder
             ],
             [
                 "name" => "Bookings",
-                "questions" => json_encode($this->questionsSurveyBrowsingSection),
+                "questions" => json_encode($this->questionsSurveyBookings),
                 "amount_of_images" => 3,
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
             [
                 "name" => "Overall App Experience",
-                "questions" => json_encode($this->questionsSurveyBrowsingSection),
+                "questions" => json_encode($this->questionsSurveyOverralExperience),
                 "amount_of_images" => 3,
                 "created_at" => now(),
                 "updated_at" => now(),

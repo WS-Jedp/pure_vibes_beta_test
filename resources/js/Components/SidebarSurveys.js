@@ -28,7 +28,7 @@ export default function SidebarSurveys({
             </div>
             <ol className='list-disc'>
                 {
-                    allSurveys.map(survey => (
+                    allSurveys.length > 0 ? allSurveys.map(survey => (
                         ((currSurvey.id || currSurvey.surveyId) === (survey.id || survey.surveyId)) ? (
                                 <li className='first:mt-0 hover:cursor-default mt-3 underline font-bold text-slate-300'>{survey.name || survey.surveyName}</li>
                             ) : (
@@ -44,7 +44,8 @@ export default function SidebarSurveys({
                                     </Link>
                                 )
                             )
-                    ))
+                    )) :
+                        (<p>You have no answered surveys</p>)
                 }
             </ol>
         </sidebar>

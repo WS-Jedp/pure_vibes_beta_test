@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { FaListUl } from 'react-icons/fa';
+import { FaListUl, FaStar, FaRegStar } from 'react-icons/fa';
 import Authenticated from '@/Layouts/Authenticated';
 import { Head } from '@inertiajs/inertia-react';
 import 'react-toastify/dist/ReactToastify.css';
 import SidebarSurveys from '@/Components/SidebarSurveys';
+import { InitStarts } from '@/Utils/InitStarts';
 
 export default function ShowByUser(props) {
 
     const { allSurveys, user } = props
     const [surveySeleted, setSurveySelected] = useState({allAnswers:[]});
     const [showSurveyList, setShowSurveyList] = useState(false);
+    console.log(surveySeleted, " epa");
 
     const toggleSurveyList = () => {
         setShowSurveyList(!showSurveyList)
@@ -17,7 +19,26 @@ export default function ShowByUser(props) {
 
     useEffect(() => {
         if(allSurveys.length > 0) setSurveySelected({...allSurveys[0]})
-    },[])
+    }, [])
+
+    const getAnswer = (answer) => {
+        switch (typeof answer) {
+            case "boolean":
+                return (<p>{answer ? "Yes" : "Do not"}</p> )
+            case "number":
+                return (
+                    <div className="flex">
+                        {InitStarts().map((start, i) => (i + 1) <= answer ?
+                            <FaStar type="button" size={25} color="#FED502" /> : start
+                        )}
+                    </div>
+                )
+            case "string":
+                return (<p>{answer}</p> )
+            default:
+                return null
+        }
+    }
 
     return (
         <Authenticated
@@ -60,7 +81,7 @@ export default function ShowByUser(props) {
                     flex flex-col items-start justify-start rounded-md
                 '>
                     {
-                        surveySeleted.allAnswers.map((answers, i) => (
+                        surveySeleted.surveyId ? surveySeleted.allAnswers.map((answers, i) => (
                                 <div className='w-full bg-white shadow divider-y items-start justify-start
                                     first:mt-0 mt-3 flex flex-col rounded-md p-9
                                 '>
@@ -71,13 +92,15 @@ export default function ShowByUser(props) {
                                             <div className='w-full bg-white shadow divider-y p-4 mb-5'>
                                                 <p className='font-bold text-base mb-3'>{answer.question}</p>
                                                 <div>
-                                                    <p>{answer.text}</p>
+                                                    { getAnswer(answer.answer) }
+                                                    { answer.text && ( <p>{answer.text}</p> ) }
                                                 </div>
                                             </div>
                                         ))
                                     }
                                 </div>
                         ))
+                        : (<p className="p-4">You have no answered surveys</p>)
                     }
                 </article>
 
