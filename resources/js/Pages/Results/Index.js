@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Authenticated from '@/Layouts/Authenticated';
-import { Head, Link } from '@inertiajs/inertia-react';
+import { Head } from '@inertiajs/inertia-react';
+import { SurveyResponseStatus } from '@/constants/surveyResponseStatus';
+import CardUser from './components/CardUser';
 
 export default function Results(props) {
 
@@ -11,8 +13,6 @@ export default function Results(props) {
     const [usersWithSurveyDone, setUsersWithSurveyDone] = useState([])
     const [usersWithSurveyUnfinished, setUsersWithSurveyUnfinished] = useState([])
     const [usersWithSurveyNotStarted, setUsersWithSurveyNotStarted] = useState([])
-
-    console.log(results)
 
     useEffect(() => {
         const done = []
@@ -29,7 +29,7 @@ export default function Results(props) {
 
             if(userObj.amountOfResults > 0 && userObj.amountOfResults < TOTAL_OF_SURVEYS) notFinished.push(userObj)
             if(userObj.amountOfResults == 0) notStarted.push(userObj)
-            if(userObj.amountOfResults > TOTAL_OF_SURVEYS) done.push(userObj)
+            if(userObj.amountOfResults == TOTAL_OF_SURVEYS) done.push(userObj)
 
             setUsersWithSurveyDone(done)
             setUsersWithSurveyUnfinished(notFinished)
@@ -50,76 +50,25 @@ export default function Results(props) {
                 w-100 max-w-9xl flex flex-col items-start justify-start bg-slate-100 shadow-sm
                 p-3 md:p-9
             '>
-                <article className='
-                    w-full p-3 rounded-md shadow-md divide-y my-3 bg-gray-100
-                '>
-                    <h3 className='font-bold text-3xl my-3'>User that finish the survey</h3>
-                    <div className='flex flex-row items-start justify-start w-full p-6 flex-nowrap
-                        overflow-x-auto
-                    '>
-                        {
-                            usersWithSurveyDone.length > 0 ? usersWithSurveyDone.map(user => (
-                                <article key={user.id} className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
-                                    min-h-[90px] flex flex-col items-start justify-start p-6 rounded-md
-                                    ease-in-out duration-500
-                                    hover:scale-[1.03] hover:shadowo-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
-                                '>
-                                    <h3 className='group-hover:text-white font-bold mb-3 divide-y'>{user.name}</h3>
-                                    <small className='font-bold group-hover:text-white'>{user.email}</small>
-                                </article>
-                            )) : (
-                                <p>There is no users that already finish the survey</p>
-                            )
-                        }
-                    </div>
-                </article>
-                <article className='
-                    w-full p-3 rounded-md shadow-md divide-y my-3 bg-gray-100
-                '>
-                    <h3 className='font-bold text-3xl my-3'>User that aren't finish the survey yet</h3>
-                    <div className='flex flex-row items-start justify-start w-full p-6 flex-nowrap
-                        overflow-x-auto
-                    '>
-                        {
-                            usersWithSurveyUnfinished.length > 0 ? usersWithSurveyUnfinished.map(user => (
-                                <article key={user.id} className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
-                                    min-h-[90px] flex flex-col items-start justify-start p-6 rounded-md
-                                    ease-in-out duration-500
-                                    hover:scale-[1.03] hover:shadowo-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
-                                '>
-                                    <h3 className='group-hover:text-white font-bold mb-3 divide-y'>{user.name}</h3>
-                                    <small className='font-bold group-hover:text-white'>{user.email}</small>
-                                    <p className='text-sm group-hover:text-white'>Surveys done: {user.amountOfResults}/{TOTAL_OF_SURVEYS}</p>
-                                </article>
-                            )) : (
-                                <p>We can't find users</p>
-                            )
-                        }
-                    </div>
-                </article>
-                <article className='
-                    w-full p-3 rounded-md shadow-md divide-y my-3 bg-gray-100
-                '>
-                    <h3 className='font-bold text-3xl my-3'>User that aren't started the survey yet</h3>
-                    <div className='flex flex-row items-start justify-start w-full p-6 flex-nowrap
-                        overflow-x-auto
-                    '>
-                        {
-                            usersWithSurveyNotStarted.length > 0 ? usersWithSurveyNotStarted.map(user => (
-                                <article className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
-                                    min-h-[90px] flex flex-col items-start justify-start p-6 rounded-md
-                                    ease-in-out duration-500
-                                    hover:scale-[1.03] hover:shadow-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
-                                '>
-                                    <h3 className='group-hover:text-white font-bold mb-3 divide-y'>{user.name}</h3>
-                                    <small className='font-bold group-hover:text-white'>{user.email}</small>
-                                </article>
-                            )) : (
-                                <p>We can't find users</p>
-                            )
-                        }
-                    </div>
-                </article>
+                <CardUser
+                    users={usersWithSurveyDone}
+                    title={"User that finish the survey"}
+                    titleNoContent={"There is no users that already finish the survey"}
+                    responseStatus={SurveyResponseStatus.DONE}
+                />
+                <CardUser
+                    users={usersWithSurveyUnfinished}
+                    title={"User that finish the survey"}
+                    titleNoContent={"We can't find users"}
+                    responseStatus={SurveyResponseStatus.NOT_FINISHED}
+                    TOTAL_OF_SURVEYS={TOTAL_OF_SURVEYS}
+                />
+                <CardUser
+                    users={usersWithSurveyNotStarted}
+                    title={"User that aren't started the survey yet"}
+                    titleNoContent={"We can't find users"}
+                    responseStatus={SurveyResponseStatus.NOT_STARTED}
+                />
             </section>
 
         </Authenticated>

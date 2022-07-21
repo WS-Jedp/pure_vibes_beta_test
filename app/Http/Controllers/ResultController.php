@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Api\ResultsContrller;
 use App\Http\Requests\Results\ResultRequest;
 use App\Models\Result;
 use App\Models\Survey;
@@ -20,6 +21,18 @@ class ResultController extends Controller
 
         return Inertia::render('Results/Index', [
             "results" => $results
+        ]);
+    }
+
+    public function show($userId)
+    {
+        $results = new ResultsContrller();
+        $allSurveys = $results->resultByUser($userId)["data"];
+        $user = User::find($userId);
+        
+        return Inertia::render('Results/show', [
+            "user" => $user,
+            "allSurveys" => $allSurveys,
         ]);
     }
 

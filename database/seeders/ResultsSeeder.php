@@ -13,6 +13,22 @@ class ResultsSeeder extends Seeder
         [
             "question_id" => 1,
             "answer" => true,
+            "text" => "All good",
+        ],
+        [
+            "question_id" => 2,
+            "answer" => 3,
+        ],
+        [
+            "question_id" => 3,
+            "answer" => 5,
+        ],
+    ];
+    protected $answersMock1V2 = [
+        [
+            "question_id" => 1,
+            "answer" => false,
+            "text" => "All good",
         ],
         [
             "question_id" => 2,
@@ -20,8 +36,7 @@ class ResultsSeeder extends Seeder
         ],
         [
             "question_id" => 3,
-            "answer" => true,
-            "text" => "All good",
+            "answer" => 4,
         ],
     ];
 

@@ -1,22 +1,53 @@
 import React, { useEffect, useState } from 'react';
+import { FaPenAlt, FaTrash, FaListUl } from 'react-icons/fa';
 import Authenticated from '@/Layouts/Authenticated';
-import { Head, Link } from '@inertiajs/inertia-react';
+import { Head } from '@inertiajs/inertia-react';
+import Modal from '@/Components/Modal';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import SidebarSurveys from '@/Components/SidebarSurveys';
+
 import { QuestionAnswerType } from '../../Container/QuestionAnswerType'
 import { getQuestionAnswerData } from '../../Utils/graphDataMethods'
-
+import CreateSurvey from './form/CreateSurvey';
+import EditSurvey from './form/EditSurvey';
+import CreateQuestion from './form/CreateQuestion';
+import {createSurvey, updateSurvey, deleteSurvey  } from "./Services"
 
 export default function Show(props) {
+    const initForm = {
+        name: "",
+        questions: [
+            {
+                id: 1,
+                type: "BOOLEAN",
+                question: ""
+            }
+        ]
+    }
 
     const { survey, allSurveys } = props
-
     const [questionsData, setQuestionsData] = useState([])
+    const [curretSurvey, setCurretSurvey] = React.useState({...initForm, id:0});
+    const [showModalCreate, setShowModalCreate] = React.useState(false);
+    const [showModalEdit, setShowModalEdit] = React.useState(false);
+    const [showSurveyList, setShowSurveyList] = useState(false);
 
-    console.log(allSurveys, survey)
+    const [form, setForm] = useState({...initForm})
+
+    const [formError, setFormError] = useState({
+        name: false,
+        questions: [ false ]
+    })
+
+    const toggleSurveyList = () => {
+        setShowSurveyList(!showSurveyList)
+    }
 
     useEffect(() => {
         let allQuestions = []
         survey.questions.forEach(question => {
-            const answersFromQuestion = survey.results.map(result => 
+            const answersFromQuestion = survey.results.map(result =>
                 result.answers.find(answer => answer.question_id == question.id))
 
             const answersGraphData = getQuestionAnswerData(answersFromQuestion.filter(answer => answer), question.type)
@@ -25,12 +56,45 @@ export default function Show(props) {
         })
         setQuestionsData(allQuestions)
     }, [])
-    
+
     return (
         <Authenticated
             auth={props.auth}
             errors={props.errors}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{survey.name}</h2>}
+            header={
+                <div className="relative flex justify-between md:justify-start">
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight border-r-2 pr-4">
+                        {survey.name}
+                    </h2>
+
+                    <div className="flex">
+                        <FaPenAlt type="button" onClick={() => {
+                            setCurretSurvey({...survey, questions: [...survey.questions]})
+                            setShowModalEdit(true)
+                        }} size={20} className="ml-4 cursor-pointer text-cyan-500" />
+                        <FaTrash type="button" onClick={() =>{
+                            deleteSurvey(survey)
+                        }} size={20} className="ml-4 cursor-pointer text-red-500" />
+                    </div>
+
+                    <div className="md:hidden">
+                        <FaListUl type="button" onClick={() =>{ toggleSurveyList() }} size={25} className="ml-4 cursor-pointer" />
+                    </div>
+
+                    {
+                        showSurveyList && (
+                            <SidebarSurveys
+                                title="All surveys"
+                                allSurveys={allSurveys}
+                                currSurvey={survey}
+                                setShowModalCreate={() => setShowModalCreate(true)}
+                                isMini={true}
+                            />
+                        )
+                    }
+                </div>
+
+            }
         >
             <Head title={survey.name} />
 
@@ -38,13 +102,13 @@ export default function Show(props) {
             flex flex-row items-start justify-around flex-wrap
             bg-gray-200 shadow-lg my-6">
 
-                <article className='relative w-full md:w-8/12 m-2 shadow-md mt-9 
+                <article className='relative w-full md:w-8/12 m-2 shadow-md mt-9
                     flex flex-col items-start justify-start rounded-md
                 '>
                     {
                         questionsData.map(questionData => (
                                 <div className='w-full bg-white shadow divider-y flex flex-col items-start justify-start
-                                    first:mt-0 mt-3 flex flex-col items-start justify-start rounded-md p-9
+                                    first:mt-0 mt-3 rounded-md p-9
                                 '>
                                     <h2 className='font-bold text-2xl'>Question #{questionData.question.id}</h2>
                                     <p className='font-regular text-base'>{questionData.question.question}</p>
@@ -56,56 +120,51 @@ export default function Show(props) {
                         ))
                     }
 
-                    <div className='w-full shadow-sm mt-6
-                    flex flex-col items-start justify-start
-                    rounded-md p-9'>
-                        <h4 className='font-bold text-xl'>Create a new question</h4>
-                        <form className='w-full relative'>
-                            <label htmlFor='question' className='my-2 w-full'>
-                                <p className='font-bold'>
-                                    New Question
-                                </p>
-                                <input className='w-full' id="question" type="text" placeholder='Write the new question..'></input>
-                            </label>
-                            <label className='my-2'>
-                                <p className='font-bold'>
-                                    Type Of Question
-                                </p>
-                                <select>
-                                    <option value="BOOLEAN"  selected>Boolean (Yes/No)</option>
-                                    <option value="RATE" >Rate</option>
-                                    <option value="TEXT" >Text</option>
-                                </select>
-                            </label>
-                            <button type='submit' className='relativie flex items-center p-3 rounded-xl my-4 shadow-md text-white justify-center bg-gradient-to-r from-purple-400 to-cyan-300
-                                duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl
-                            '>Create question</button>
-                        </form>
-                    </div>
+                    <CreateQuestion surveyId={survey.id}/>
+
                 </article>
 
+                <SidebarSurveys
+                    title="All surveys"
+                    allSurveys={allSurveys}
+                    currSurvey={survey}
+                    setShowModalCreate={() => setShowModalCreate(true)}
+                />
 
-                <sidebar className="sticky mt-9 top-0 right-0 w-3/12 m-2 bg-white hidden md:flex flex-col items-start content-start 
-                    p-9 rounded-lg shadow-md min-h-[300px]
-                ">
-                    <h3 className='font-bold text-xl mb-2'>All Surveys</h3>
-                    <ol className='list-disc'>
-                        {
-                            allSurveys.map(currSurvey => (
-                                survey.id === currSurvey.id ? (
-                                        <li className='first:mt-0 hover:cursor-default mt-3 underline font-bold text-slate-300'>{currSurvey.name}</li>
-                                    ) : (
-                                        <Link href={(route('survey.show', currSurvey.id))}>
-                                            <li className="mt-3 ease-in-out duration-100 hover:translate-x-2 hover:text-purple-400" >{currSurvey.name}</li>
-                                        </Link>
-                                    )
-                            ))
-                        }
-                    </ol>
-                </sidebar>
-               
             </section>
-
+            <Modal
+                title="Create a new survey"
+                nameSave="Create"
+                showModal={showModalCreate}
+                setShowModal={setShowModalCreate}
+                onSave={() => createSurvey(form, formError, setFormError)}
+            >
+                <CreateSurvey
+                    form={form}
+                    setForm={setForm}
+                    formError={formError}
+                    setFormError={setFormError}
+                    initForm={initForm}
+                />
+            </Modal>
+            <Modal
+                title="Edit survey"
+                message="When you save the changes you will not be able to revert them"
+                messageColor="text-yellow-500"
+                nameSave="Save"
+                showModal={showModalEdit}
+                setShowModal={setShowModalEdit}
+                onSave={() => updateSurvey(curretSurvey, formError, setFormError)}
+            >
+                <EditSurvey
+                    form={curretSurvey}
+                    setForm={setCurretSurvey}
+                    formError={formError}
+                    setFormError={setFormError}
+                    initForm={initForm}
+                />
+            </Modal>
+            <ToastContainer />
         </Authenticated>
     );
 }

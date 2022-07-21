@@ -30,11 +30,12 @@ Route::get('/', function () {
 
 
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('results', ResultController::class);
-    Route::resource('survey', SurveyController::class); 
+    Route::resource('survey', SurveyController::class);
 });
 
 require __DIR__ . '/auth.php';

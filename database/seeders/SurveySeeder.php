@@ -14,7 +14,7 @@ class SurveySeeder extends Seeder
         [
             "id" => 1,
             "type" => QUESTION_TYPES::BOOLEAN,
-            "question" => "Were there any sign-up or login issues?",
+            "question" => "Were there any sign-up or login issues? If yes, please briefly explain why!",
         ],
         [
             "id" => 2,
@@ -69,12 +69,7 @@ class SurveySeeder extends Seeder
             "id" => 2,
             "type" => QUESTION_TYPES::TEXT,
             "question" => "In the session description, what would you like to see more information about?",
-        ],
-        [
-            "id" => 3,
-            "type" => QUESTION_TYPES::BOOLEAN,
-            "question" => 'Does the "session details" description persuade you to make a booking?',
-        ],
+        ]
     ];
 
     protected $questionsSurveyBookings = [
@@ -99,7 +94,7 @@ class SurveySeeder extends Seeder
         [
             "id" => 1,
             "type" => QUESTION_TYPES::TEXT,
-            "question" => 'When you navigate through the app, do you become confused at any point? If  yes, please explain.?',
+            "question" => 'When you navigate through the app, do you become confused at any point? If  yes, please explain?',
         ],
         [
             "id" => 2,
@@ -148,7 +143,7 @@ class SurveySeeder extends Seeder
             [
                 "name" => "Home Tab",
                 "questions" => json_encode($this->questionsSurveyHomeSection),
-                "amount_of_images" => 3,
+                "amount_of_images" => 2,
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
@@ -161,14 +156,14 @@ class SurveySeeder extends Seeder
             ],
             [
                 "name" => "Bookings",
-                "questions" => json_encode($this->questionsSurveyBrowsingSection),
+                "questions" => json_encode($this->questionsSurveyBookings),
                 "amount_of_images" => 3,
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
             [
                 "name" => "Overall App Experience",
-                "questions" => json_encode($this->questionsSurveyBrowsingSection),
+                "questions" => json_encode($this->questionsSurveyOverralExperience),
                 "amount_of_images" => 3,
                 "created_at" => now(),
                 "updated_at" => now(),

@@ -39,7 +39,7 @@ class UserInvitation extends Mailable
      */
     public function build()
     {
-        return $this->from(env('MAIL_USERNAME'), 'Invitation To Pure Vibes Beta Test')
+        return $this->from(env('MAIL_USERNAME'), 'Invitation To Dharma Beta Test')
                     ->view('emails.userInvitation');
     }
 }

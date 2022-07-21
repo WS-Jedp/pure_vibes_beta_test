@@ -15,7 +15,7 @@ class DashboardController extends Controller
 
         $user = $req->user();
         $role = $user->role()->first(['id', 'name']);
-       
+
 
         $allUsers = User::with('role')->get();
 
@@ -29,8 +29,6 @@ class DashboardController extends Controller
             return $user->role->name == ROLES::GUEST;
         });
         
-        
-
         $props = [
             "role" => $role,
             "admins" => $admins,

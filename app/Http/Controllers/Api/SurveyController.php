@@ -210,11 +210,11 @@ class SurveyController extends Controller
             $validated = $request->validated();
 
             $survey = Survey::find($id);
-            $survey->name = $validated["name"];
+            $survey->amount_of_images = count($validated["questions"]);
+
             $survey->save();
         } catch (\Throwable $th) {
             return [
-                'ok' => false,
                 'status' => 200,
                 'data' => 'Check the entered data'
             ];

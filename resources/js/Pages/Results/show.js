@@ -1,122 +1,118 @@
 import React, { useEffect, useState } from 'react';
+import { FaListUl, FaStar, FaRegStar } from 'react-icons/fa';
 import Authenticated from '@/Layouts/Authenticated';
-import { Head, Link } from '@inertiajs/inertia-react';
+import { Head } from '@inertiajs/inertia-react';
+import 'react-toastify/dist/ReactToastify.css';
+import SidebarSurveys from '@/Components/SidebarSurveys';
+import { InitStarts } from '@/Utils/InitStarts';
 
-export default function ResultsShow(props) {
+export default function ShowByUser(props) {
 
-    const { results } = props
+    const { allSurveys, user } = props
+    const [surveySeleted, setSurveySelected] = useState({allAnswers:[]});
+    const [showSurveyList, setShowSurveyList] = useState(false);
+    console.log(surveySeleted, " epa");
 
-    const TOTAL_OF_SURVEYS = 6
-
+    const toggleSurveyList = () => {
+        setShowSurveyList(!showSurveyList)
+    }
 
     useEffect(() => {
-        const done = []
-        const notFinished = []
-        const notStarted = []
-
-        results.forEach(result => {
-            let userObj = {
-                id: result.id,
-                name: result.name,
-                email: result.email,
-                amountOfResults: result.results.length
-            }
-
-            if(userObj.amountOfResults > 0 && userObj.amountOfResults < TOTAL_OF_SURVEYS) notFinished.push(userObj)
-            if(userObj.amountOfResults == 0) notStarted.push(userObj)
-            if(userObj.amountOfResults > TOTAL_OF_SURVEYS) done.push(userObj)
-
-            setUsersWithSurveyDone(done)
-            setUsersWithSurveyUnfinished(notFinished)
-            setUsersWithSurveyNotStarted(notStarted)
-
-        })
+        if(allSurveys.length > 0) setSurveySelected({...allSurveys[0]})
     }, [])
+
+    const getAnswer = (answer) => {
+        switch (typeof answer) {
+            case "boolean":
+                return (<p>{answer ? "Yes" : "Do not"}</p> )
+            case "number":
+                return (
+                    <div className="flex">
+                        {InitStarts().map((start, i) => (i + 1) <= answer ?
+                            <FaStar type="button" size={25} color="#FED502" /> : start
+                        )}
+                    </div>
+                )
+            case "string":
+                return (<p>{answer}</p> )
+            default:
+                return null
+        }
+    }
 
     return (
         <Authenticated
             auth={props.auth}
             errors={props.errors}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Results</h2>}
+            header={
+                <div className="relative flex justify-between md:justify-start">
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight border-r-2 pr-4">
+                        {user.name}
+                    </h2>
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight pl-4">{surveySeleted.surveyName}</h2>
+                    <div>
+                        <FaListUl type="button" onClick={() =>{ toggleSurveyList() }} size={25} className="ml-4 cursor-pointer md:hidden" />
+                    </div>
+
+                    {
+                        showSurveyList && (
+                            <SidebarSurveys
+                                title="Answered surveys"
+                                allSurveys={allSurveys}
+                                currSurvey={surveySeleted}
+                                isMini={true}
+                                isResult={true}
+                                setSurveySelected={(item)=>setSurveySelected({ ...item })}
+                                toggleSurveyList={()=>toggleSurveyList()}
+                            />
+                        )
+                    }
+                </div>
+
+            }
         >
-            <Head title="Surveys" />
+            <Head title={user.name} />
 
-            <section className='
-                w-100 max-w-9xl flex flex-col items-start justify-start bg-slate-100 shadow-sm
-                p-3 md:p-9
-            '>
-                <article className='
-                    w-full p-3 rounded-md shadow-md divide-y my-3 bg-gray-100
+            <section className="relative w-full mx-auto max-w-6xl p-3 md:p-9
+            flex flex-row items-start justify-around flex-wrap
+            bg-gray-200 shadow-lg my-6">
+
+                <article className='relative w-full md:w-8/12 m-2 shadow-md mt-9
+                    flex flex-col items-start justify-start rounded-md
                 '>
-                    <h3 className='font-bold text-3xl my-3'>User that finish the survey</h3>
-                    <div className='flex flex-row items-start justify-start w-full p-6 flex-nowrap
-                        overflow-x-auto
-                    '>
-                        {
-                            usersWithSurveyDone.length > 0 ? usersWithSurveyDone.map(user => (
-                                <article key={user.id} className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
-                                    min-h-[90px] flex flex-col items-start justify-start p-6 rounded-md
-                                    ease-in-out duration-500
-                                    hover:scale-[1.03] hover:shadowo-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
+                    {
+                        surveySeleted.surveyId ? surveySeleted.allAnswers.map((answers, i) => (
+                                <div className='w-full bg-white shadow divider-y items-start justify-start
+                                    first:mt-0 mt-3 flex flex-col rounded-md p-9
                                 '>
-                                    <h3 className='group-hover:text-white font-bold mb-3 divide-y'>{user.name}</h3>
-                                    <small className='font-bold group-hover:text-white'>{user.email}</small>
-                                </article>
-                            )) : (
-                                <p>There is no users that already finish the survey</p>
-                            )
-                        }
-                    </div>
+                                    <h2 className='font-bold text-2xl mb-4'>Answers #{i+1}</h2>
+
+                                    {
+                                        answers.map((answer, i) => (
+                                            <div className='w-full bg-white shadow divider-y p-4 mb-5'>
+                                                <p className='font-bold text-base mb-3'>{answer.question}</p>
+                                                <div>
+                                                    { getAnswer(answer.answer) }
+                                                    { answer.text && ( <p>{answer.text}</p> ) }
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                        ))
+                        : (<p className="p-4">You have no answered surveys</p>)
+                    }
                 </article>
-                <article className='
-                    w-full p-3 rounded-md shadow-md divide-y my-3 bg-gray-100
-                '>
-                    <h3 className='font-bold text-3xl my-3'>User that aren't finish the survey yet</h3>
-                    <div className='flex flex-row items-start justify-start w-full p-6 flex-nowrap
-                        overflow-x-auto
-                    '>
-                        {
-                            usersWithSurveyUnfinished.length > 0 ? usersWithSurveyUnfinished.map(user => (
-                                <article key={user.id} className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
-                                    min-h-[90px] flex flex-col items-start justify-start p-6 rounded-md
-                                    ease-in-out duration-500
-                                    hover:scale-[1.03] hover:shadowo-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
-                                '>
-                                    <h3 className='group-hover:text-white font-bold mb-3 divide-y'>{user.name}</h3>
-                                    <small className='font-bold group-hover:text-white'>{user.email}</small>
-                                    <p className='text-sm group-hover:text-white'>Surveys done: {user.amountOfResults}/{TOTAL_OF_SURVEYS}</p>
-                                </article>
-                            )) : (
-                                <p>We can't find users</p>
-                            )
-                        }
-                    </div>
-                </article>
-                <article className='
-                    w-full p-3 rounded-md shadow-md divide-y my-3 bg-gray-100
-                '>
-                    <h3 className='font-bold text-3xl my-3'>User that aren't started the survey yet</h3>
-                    <div className='flex flex-row items-start justify-start w-full p-6 flex-nowrap
-                        overflow-x-auto
-                    '>
-                        {
-                            usersWithSurveyNotStarted.length > 0 ? usersWithSurveyNotStarted.map(user => (
-                                <article className='group bg-white shadow-lg first:mx-0 mx-3 min-w-[180px] w-1/5 max-w-[270px]
-                                    min-h-[90px] flex flex-col items-start justify-start p-6 rounded-md
-                                    ease-in-out duration-500
-                                    hover:scale-[1.03] hover:shadowo-xl hover:bg-gradient-to-r hover:from-purple-300 hover:to-purple-500 hover:cursor-pointer
-                                '>
-                                    <h3 className='group-hover:text-white font-bold mb-3 divide-y'>{user.name}</h3>
-                                    <small className='font-bold group-hover:text-white'>{user.email}</small>
-                                </article>
-                            )) : (
-                                <p>We can't find users</p>
-                            )
-                        }
-                    </div>
-                </article>
+
+                <SidebarSurveys
+                    title="Answered surveys"
+                    allSurveys={allSurveys}
+                    currSurvey={surveySeleted}
+                    isResult={true}
+                    setSurveySelected={(item)=>setSurveySelected({ ...item })}
+                    toggleSurveyList={()=>toggleSurveyList()}
+                />
             </section>
-
         </Authenticated>
     );
 }
