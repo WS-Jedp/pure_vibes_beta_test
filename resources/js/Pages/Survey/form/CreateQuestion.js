@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
+import { useForm } from '@inertiajs/inertia-react'
 import {addQuestion} from "../Services"
 
 export default function ({surveyId}) {
+
     const initFormQuestion = {
         type: "BOOLEAN",
         question: ""

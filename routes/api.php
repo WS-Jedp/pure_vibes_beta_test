@@ -35,8 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 
-    Route::post('surveys/{id}/question', [SurveyController::class, 'storeQuestion']);
-    Route::delete('surveys/{surveyId}/question/{questionId}', [SurveyController::class, 'destroyQuestion']);
+    
     Route::resource('surveys', SurveyController::class);
     Route::prefix('surveys/state')->group(function () {
         Route::get('/all', [SurveyController::class, 'surveysState']);

@@ -1,24 +1,32 @@
 import axios from "axios";
 import Swal from 'sweetalert2'
 import ToastAlert from '@/Components/Toast';
+import { Inertia } from '@inertiajs/inertia'
+
+
+async function saveData(url, data) {
+    Inertia.post(url, data, {
+        onError(err) {
+            ToastAlert("Error while registering, check the data", "danger")
+        },
+        onStart(){ 
+            ToastAlert("Loading...", "loader")
+        },
+        onSuccess(data) {
+            if(data.data) {
+                ToastAlert("Successful registration", "success")   
+            } else {
+                ToastAlert("Successful registration", "danger")   
+
+            }
+        }}
+    )
+}
 
 export const createSurvey = async (form, formError, setFormError) => {
+
     if (validateForm(form, formError, setFormError)) {
-        await ToastAlert(
-            "",
-            "promise",
-            axios.post("http://192.168.0.5:8000/api/surveys", form, {
-                headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
-            })
-                .then(({ data }) => {
-                    if (data.ok) {
-                        // setShowModalCreate(false);
-                        window.location.href = `/survey/${data.data.id}`
-                    } else throw new Error("Data invalid")
-                }).catch(e=>console.log(e)),
-            "Successful registration",
-            "Error while registering, check the data"
-        )
+        await saveData("/save/surveys/create", form)
     } else {
         ToastAlert("Enter the data correctly", "warning")
     }
@@ -37,22 +45,7 @@ export const updateSurvey = async (curretSurvey, formError, setFormError) => {
             confirmButtonText: 'Yes, save!'
           }).then(async(result) => {
               if (result.isConfirmed) {
-
-                await ToastAlert(
-                    "",
-                    "promise",
-                    axios.put(`http://192.168.0.5:8000/api/surveys/${curretSurvey.id}`, curretSurvey, {
-                        headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
-                    })
-                        .then(({ data }) => {
-                            if (data.ok) {
-                                // setShowModalEdit(false);
-                                window.location.reload();
-                            } else throw new Error("Data invalid")
-                        }).catch(e=>console.log(e)),
-                    "Successful registration",
-                    "Error while registering, check the data"
-                )
+                await saveData(`/update/surveys/${curretSurvey.id}`, curretSurvey)
             }
           })
     } else {
@@ -71,23 +64,24 @@ export const deleteSurvey = (item) => {
         confirmButtonText: 'Yes, delete it!'
       }).then(async(result) => {
           if (result.isConfirmed) {
-            await ToastAlert(
-                "",
-                "promise",
-                axios.delete(`http://192.168.0.5:8000/api/surveys/${item.id}`, {
-                    headers: {Authorization: "Bearer 6|bo99qmUO88ObvhMs1JEmKWLpGDh5lLDtDH2pAw1f"}
-                })
-                    .then(({ data }) => {
-                        if (data.ok) {
-                            window.location.href = "/survey"
-                        }
-                        else throw new Error("Error deleting try again later");
-                    }).catch(e=>console.log(e)),
-                "Successful removal",
-                "Error deleting try again later"
-            )
+            await saveData(`/delete/surveys/${item.id}`, null)
         }
       })
+}
+
+
+export const addQuestion = async(formQuestion, formQuestionError, setFormQuestionError, surveyId) => {
+    if (validateFormQuestion(formQuestion, formQuestionError, setFormQuestionError)) {
+        await saveData(`/save/surveys/${surveyId}/question`, formQuestion)
+    } else {
+        ToastAlert("Enter the data correctly", "warning")
+        setTimeout(() => {
+            setFormQuestionError({
+                type: false,
+                question: false
+            })
+        }, 3000);
+    }
 }
 
 const validateForm = (item, formError, setFormError) => {
@@ -107,34 +101,6 @@ const validateForm = (item, formError, setFormError) => {
 
     setFormError({ ...formError })
     return isSuccess;
-}
-
-
-export const addQuestion = async(formQuestion, formQuestionError, setFormQuestionError, surveyId) => {
-    if (validateFormQuestion(formQuestion, formQuestionError, setFormQuestionError)) {
-        await ToastAlert(
-            "",
-            "promise",
-            axios.post(`http://192.168.0.5:8000/api/surveys/${surveyId}/question`, formQuestion, {
-                headers: {Authorization: "Bearer 5|7XuZ6As7kewgT1PTDKEY6DoMzAgKxhjyP6AZBGuh"}
-            })
-                .then(({ data }) => {
-                    if (data.ok) {
-                        window.location.reload()
-                    } else throw new Error("Data invalid")
-                }).catch(e=>console.log(e)),
-            "Successful registration",
-            "Error while registering, check the data"
-        )
-    } else {
-        ToastAlert("Enter the data correctly", "warning")
-        setTimeout(() => {
-            setFormQuestionError({
-                type: false,
-                question: false
-            })
-        }, 3000);
-    }
 }
 
 const validateFormQuestion = (item, formQuestionError, setFormQuestionError) => {
