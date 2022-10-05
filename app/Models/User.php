@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -21,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**
@@ -41,4 +44,39 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class, 'user_id', 'id');
+    }
+
+    public function invited_by()
+    {
+        $user = Invitation::join('users', 'users.id', '=', 'invitations.user_id')
+            ->where('guest_id', $this->id)
+            ->select('users.id', 'users.name', 'users.email')
+            ->first();
+
+        return $user;
+    }
+
+    public function results()
+    {
+        return $this->hasMany(Result::class, 'user_id', 'id');
+    }
+
+    public function result_of(int $survey_id)
+    {
+        return $this->results()->where('survey_id', $survey_id)->first();
+    }
+
+    public function amount_of_results()
+    {
+        return $this->results()->count();
+    }
 }
