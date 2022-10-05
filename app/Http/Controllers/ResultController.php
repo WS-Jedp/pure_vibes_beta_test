@@ -27,7 +27,7 @@ class ResultController extends Controller
     public function show($userId)
     {
         $results = new ResultsContrller();
-        $allSurveys = $results->resultByUser($userId)["data"];
+        $allSurveys = $results->resultByUser($userId);
         $user = User::find($userId);
         
         return Inertia::render('Results/show', [

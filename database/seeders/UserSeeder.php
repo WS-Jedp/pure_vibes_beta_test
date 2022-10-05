@@ -20,20 +20,8 @@ class UserSeeder extends Seeder
             [
                 "name" => "Juanes",
                 "email" => "jedp082@gmail.com",
-                "password" => Hash::make("05022001"),
+                "password" => Hash::make(env("DEFAULT_PASSWORD_ADMINS")),
                 "role_id" => 1,
-            ],
-            [
-                "name" => "Test 1",
-                "email" => "test1@gmail.com",
-                "password" => Hash::make("05022001"),
-                "role_id" => 2,
-            ],
-            [
-                "name" => "Test 2",
-                "email" => "test2@gmail.com",
-                "password" => Hash::make("05022001"),
-                "role_id" => 3,
             ],
         ]);
     }

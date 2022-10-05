@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             SurveySeeder::class,
-            ResultsSeeder::class
         ]);
     }
 }

@@ -39,8 +39,8 @@ class ResultsContrller extends Controller
         $data = Result::where('user_id', $userId)->get()
             ->groupBy("survey_id");
 
-        foreach ($data as $key => $answers) {
-            $survey = Survey::find($key);
+        foreach ($data as $surveyID => $answers) {
+            $survey = Survey::find($surveyID);
             $result = [
                 "surveyId" => $survey->id,
                 "surveyName" => $survey->name,
