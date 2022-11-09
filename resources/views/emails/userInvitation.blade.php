@@ -86,7 +86,7 @@
         <p class="fw-normal fs-4">
             Follow the link to see your 2 options 👀👀
         </p>
-        <a class="fw-bold fs-3 text-underline" href="{{ $FRONTEND_BASE_URL }}/invited?email={{ $userInvited->email }}&tmpPass={{$userPassword}}">
+        <a class="fw-bold fs-3 text-underline" href="https://dharmabetatest.web.app/invited?email={{ $userInvited->email }}&tmpPass={{$userPassword}}">
             Go to the beta test!
         </a>
     </article>
